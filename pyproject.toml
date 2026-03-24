@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "tss-bank-account"
+version = "1.0.0"
+description = "TSS T1 – Testare Unitara in Python: BankAccount"
+requires-python = ">=3.10"
+dependencies = []
+
+# Nota: configuratia pytest se afla exclusiv in pytest.ini
+# pentru a evita avertismentul "ini-options found in multiple config files".
+
+# ---------------------------------------------------------------------------
+# coverage.py
+# ---------------------------------------------------------------------------
+
+[tool.coverage.run]
+source = ["src"]
+omit = ["*/tests/*", "*/__init__.py"]
+
+[tool.coverage.report]
+show_missing = true
+precision = 2
+
+[tool.coverage.html]
+directory = "htmlcov"
