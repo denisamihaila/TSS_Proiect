@@ -1,0 +1,29 @@
+# Virtual environments
+.venv/
+venv/
+env/
+~/tss_venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Coverage
+.coverage
+htmlcov/
+coverage.xml
+
+# mutmut
+.mutmut-cache
+
+# pytest
+.pytest_cache/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
