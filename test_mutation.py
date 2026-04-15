@@ -9,10 +9,10 @@ Comandă: mutmut run --paths-to-mutate fitness_class_booking.py
 Rulat în: WSL Ubuntu 24.04 / Python 3.12.3 / mutmut 2.5.1
 
   Total mutanți generați : 80
-  🎉 Uciși               : 53
-  🤔 Suspicioși          : 16
-  🙁 Supraviețuitori     : 11
-  🔇 Omiși               :  0
+  - Uciși               : 53
+  - Suspicioși          : 16
+  - Supraviețuitori     : 11
+  - Omiși               :  0
 
   Scor mutație inițial   : 53/80 ≈ 66.3%
 

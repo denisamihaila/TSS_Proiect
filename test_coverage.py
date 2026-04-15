@@ -410,9 +410,9 @@ class TestConditionCoverage(unittest.TestCase):
 
     def test_cc_C5_membership_sessions_ten_both_discounts_applied(self) -> None:
         """C5: has_membership=True (D7=True) ∧ sessions>=10 (D8=True).
-        Ambele reduceri → cost = 10 × 10 × 0.80 × 0.90 = 72.0."""
+        Ambele reduceri aditiv → cost = 10 × 10 × (1 − 0.30) = 70.0."""
         cost = self.b.calculate_cost(10, True)
-        self.assertAlmostEqual(cost, 72.0)
+        self.assertAlmostEqual(cost, 70.0)
 
 
 if __name__ == "__main__":

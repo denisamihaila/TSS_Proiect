@@ -18,7 +18,7 @@ anulări cu promovare automată din waitlist.
 | `__init__(class_name, instructor, max_spots, price_per_session)` | Inițializează sesiunea; validează toți parametrii |
 | `book_spot(client_name) → str` | Rezervă un loc: `"confirmed"` / `"waitlist"` / `"rejected"` |
 | `cancel_booking(client_name) → bool` | Anulează rezervare; promovează automat din waitlist |
-| `calculate_cost(sessions, has_membership) → float` | Calculează costul cu reduceri cumulative (membership 20% + volum 10%) |
+| `calculate_cost(sessions, has_membership) → float` | Calculează costul unui ciclu [1–20] cu reduceri aditiv (membership 20% + volum 10%) |
 
 **Tipuri de clase valide:** `"dance"`, `"pilates"`, `"yoga"`, `"zumba"`  
 **Capacitate:** 1–30 locuri confirmate + max 5 pe waitlist  
@@ -75,7 +75,7 @@ anulări cu promovare automată din waitlist.
 | EC22 | sessions > 20 (peste domeniu) | `sessions=21` | `ValueError` |
 | EC23 | cu membership, sessions < 10 | `sessions=5, True` | `40.0` |
 | EC24 | fără membership, sessions ≥ 10 | `sessions=10, False` | `90.0` |
-| EC25 | cu membership, sessions ≥ 10 | `sessions=10, True` | `72.0` |
+| EC25 | cu membership, sessions ≥ 10 | `sessions=10, True` | `70.0` |
 | EC30 | sessions tip invalid (str) | `"5"` | `ValueError` |
 
 ---
@@ -232,10 +232,10 @@ ValueError          │
 
 | has_membership | sessions ≥ 10 | Rezultat |
 |----------------|---------------|---------|
-| False | False | cost de bază |
+| False | False | cost de bază (discount 0%) |
 | True | False | −20% membership |
 | False | True | −10% volum |
-| True | True | −20% −10% cumulative |
+| True | True | −30% aditiv (20% + 10% din prețul de bază) |
 
 ---
 

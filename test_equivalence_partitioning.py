@@ -214,9 +214,9 @@ class TestEquivalencePartitioning(unittest.TestCase):
         self.assertAlmostEqual(cost, 90.0)
 
     def test_calculate_cost_sessions_ten_with_membership_applies_both_discounts(self) -> None:
-        """EC25: sessions=10, cu membership → 10 × 10.0 × 0.80 × 0.90 = 72.0."""
+        """EC25: sessions=10, cu membership → 10 × 10.0 × (1 − 0.30) = 70.0."""
         cost = self.booking.calculate_cost(10, True)
-        self.assertAlmostEqual(cost, 72.0)
+        self.assertAlmostEqual(cost, 70.0)
 
     def test_calculate_cost_non_integer_sessions_raises_value_error(self) -> None:
         """EC30: sessions="5" (str, non-int) → ValueError.

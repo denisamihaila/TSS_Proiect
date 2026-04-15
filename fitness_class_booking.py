@@ -1,25 +1,15 @@
-"""
-fitness_class_booking.py – Implementarea clasei FitnessClassBooking.
-
-Proiect universitar TSS – T1 Testare unitară Python.
-"""
-
-
 class FitnessClassBooking:
     """
-    Manages bookings for a fitness class session.
+    Gestionează rezervările pentru o ședință de fitness.
 
-    Supports confirmed spots, a waitlist of up to 5 people, and cancellations
-    with automatic promotion from the waitlist.
-
-    Attributes:
-        class_name          One of: "dance", "pilates", "yoga", "zumba"
-        instructor          Non-empty string
-        max_spots           Integer 1–30
+    Atribute:
+        class_name          "dance", "pilates", "yoga" sau "zumba"
+        instructor          Șir nevid
+        max_spots           Întreg 1–30
         price_per_session   Float > 0
-        booked_spots        Current confirmed bookings (starts at 0)
-        waitlist            List of waitlisted client names (max 5)
-        _confirmed          Internal list of confirmed client names
+        booked_spots        Locuri confirmate (pornește de la 0)
+        waitlist            Listă de așteptare (max 5 persoane)
+        _confirmed          Listă internă a clienților confirmați
     """
 
     VALID_CLASSES = {"dance", "pilates", "yoga", "zumba"}
@@ -32,15 +22,6 @@ class FitnessClassBooking:
         max_spots: int,
         price_per_session: float,
     ) -> None:
-        """
-        Initialize a FitnessClassBooking session.
-
-        :param class_name:          Type of class. Must be one of VALID_CLASSES.
-        :param instructor:          Instructor name. Non-empty string.
-        :param max_spots:           Capacity. Integer between 1 and 30 inclusive.
-        :param price_per_session:   Price per session. Must be > 0.
-        :raises ValueError: If any parameter fails validation.
-        """
         if class_name not in self.VALID_CLASSES:
             raise ValueError(
                 f"class_name must be one of {sorted(self.VALID_CLASSES)}, got '{class_name}'"
@@ -62,16 +43,8 @@ class FitnessClassBooking:
 
     # ------------------------------------------------------------------
     def book_spot(self, client_name: str) -> str:
-        """
-        Attempt to book a spot for a client.
-
-        :param client_name: Name of the client. Must be a non-empty string.
-        :return:
-            "confirmed" – spot booked successfully.
-            "waitlist"  – class full but waitlist has room (< 5 people).
-            "rejected"  – class full and waitlist full (5 people).
-        :raises ValueError: If client_name is empty or whitespace-only.
-        """
+        """Rezervă un loc: returnează 'confirmed', 'waitlist' sau 'rejected'.
+        Ridică ValueError dacă client_name este gol sau non-string."""
         if not isinstance(client_name, str) or not client_name or not client_name.strip():
             raise ValueError("client_name must be a non-empty string")
 
@@ -89,15 +62,8 @@ class FitnessClassBooking:
 
     # ------------------------------------------------------------------
     def cancel_booking(self, client_name: str) -> bool:
-        """
-        Cancel a booking for a client.
-
-        If the client has a confirmed spot, it is freed and the first person
-        on the waitlist (if any) is automatically promoted to confirmed.
-
-        :param client_name: Name of the client whose booking to cancel.
-        :return: True if a booking was found and cancelled, False otherwise.
-        """
+        """Anulează rezervarea clientului; promovează automat primul din waitlist.
+        Returnează True dacă rezervarea a fost găsită, False altfel."""
         name = client_name.strip() if client_name else ""
 
         if name in self._confirmed:
@@ -116,18 +82,9 @@ class FitnessClassBooking:
 
     # ------------------------------------------------------------------
     def calculate_cost(self, sessions: int, has_membership: bool) -> float:
-        """
-        Calculate the total cost for a number of sessions.
-
-        Discount rules (applied cumulatively in order):
-            1. Membership discount:  20% off base cost  (if has_membership).
-            2. Volume discount:      10% off             (if sessions >= 10).
-
-        :param sessions:        Number of sessions. Must be in [1, 20].
-        :param has_membership:  Whether the client has an active membership.
-        :return: Total cost rounded to 2 decimal places.
-        :raises ValueError: If sessions < 1 or sessions > 20.
-        """
+        """Calculează costul total pentru sessions ședințe dintr-un ciclu de membership [1, 20].
+        Reduceri aditiv din prețul de bază: membership −20%, volum −10% (sesiunile 10–20).
+        Ridică ValueError dacă sessions este în afara domeniului sau non-integer."""
         if not isinstance(sessions, int) or isinstance(sessions, bool) or sessions < 1 or sessions > 20:
             raise ValueError(
                 f"sessions must be between 1 and 20 inclusive, got {sessions}"
@@ -135,10 +92,10 @@ class FitnessClassBooking:
 
         cost = sessions * self.price_per_session
 
+        discount = 0.0
         if has_membership:
-            cost *= 0.80  # 20% membership discount
-
+            discount += 0.20
         if sessions >= 10:
-            cost *= 0.90  # additional 10% volume discount
+            discount += 0.10 
 
-        return round(cost, 2)
+        return round(cost * (1 - discount), 2)
