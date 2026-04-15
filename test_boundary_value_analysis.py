@@ -3,8 +3,6 @@ test_boundary_value_analysis.py – Analiza valorilor de frontieră (BVA).
 
 Strategie: Se testează exact la frontieră, imediat sub și imediat deasupra
 fiecărei limite critice, deoarece bug-urile apar cel mai frecvent la granițe.
-
-Proiect TSS – T1 | FitnessClassBooking
 """
 
 import unittest
