@@ -113,36 +113,40 @@ Proiect TSS – T1 | FitnessClassBooking
 # ─────────────────────────────────────────────────────────────────────────────
 #
 # Cod complet (inclusiv garda de validare):
-#   (1) if sessions < 1 or sessions > 20:  raise ValueError   ← D_guard
+#   (1) if not isinstance(sessions,int) or isinstance(sessions,bool)
+#       or sessions < 1 or sessions > 20:  raise ValueError    ← D_guard
 #   (2) cost = sessions * price_per_session
-#   (3) if has_membership:   cost *= 0.80                     ← D7
-#   (4) if sessions >= 10:   cost *= 0.90                     ← D8
-#   (5) return round(cost, 2)
+#   (3) discount = 0.0
+#   (4) if has_membership:   discount += 0.20                  ← D7
+#   (5) if sessions >= 10:   discount += 0.10                  ← D8
+#   (6) return round(cost * (1 - discount), 2)
 #
 # Graf de flux de control (CFG):
 #
 #   N1 [intrare]
 #    │
 #    ▼
-#   N2: if sessions < 1 or sessions > 20   ← D_guard
+#   N2: if [sessions invalid]   ← D_guard
 #    │ True             │ False
 #    ▼                  ▼
-#   N3: raise      N4: cost = sessions × price
+#   N3: raise      N4: cost = sessions × price; discount = 0.0
 #   ValueError          │
 #    │                  ▼
 #    │             N5: if has_membership   ← D7
 #    │              │ True    │ False
 #    │              ▼         │
-#    │         N6: ×0.80      │
+#    │         N6: discount   │
+#    │             += 0.20    │
 #    │              └────┬────┘
 #    │                   ▼
 #    │             N7: if sessions >= 10   ← D8
 #    │              │ True    │ False
 #    │              ▼         │
-#    │         N8: ×0.90      │
+#    │         N8: discount   │
+#    │             += 0.10    │
 #    │              └────┬────┘
 #    │                   ▼
-#    │             N9: return round(cost, 2)
+#    │             N9: return round(cost × (1−discount), 2)
 #    │                   │
 #    └───────────────────┘
 #                        │

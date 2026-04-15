@@ -52,6 +52,9 @@ Grup C – Mutanți comportamentali NEECHIVALENȚI (3 mutanți)
   M12 – __init__: `not instructor OR not instructor.strip()`
                 → `not instructor AND not instructor.strip()`
         EFECT: instructor cu whitespace pur ("   ") trece validarea.
+        Notă: codul actual are și `not isinstance(instructor, str)` înaintea acestor
+        condiții (adăugat ulterior pentru type safety); mutantul M12 vizează
+        operatorul `or` dintre verificările de conținut, nu isinstance.
 
   M22 – __init__: `price_per_session <= 0`
                 → `price_per_session <= 1`
@@ -60,10 +63,10 @@ Grup C – Mutanți comportamentali NEECHIVALENȚI (3 mutanți)
   M76 – calculate_cost: `round(cost, 2)` → `round(cost, 3)`
         EFECT: costul este returnat cu 3 zecimale în loc de 2.
 
-  Notă: mutantul M19 (care viza `isinstance(max_spots, bool)`) nu mai este
-  aplicabil deoarece verificarea bool a fost eliminată din codul sursă în
-  urma simplificării clasei. bool False (== 0) este respins prin condiția
-  `max_spots < 1`, iar bool True (== 1) este acceptat ca max_spots valid.
+  Notă: verificarea `isinstance(max_spots, bool)` a fost reintrodusă ulterior
+  în cod (pentru a respinge explicit True și False). Raportul mutmut a fost
+  generat pe versiunea fără această verificare; dacă mutmut ar fi rulat acum,
+  M19 ar fi din nou relevant.
 
   ⚙️  M22 este omorât de testul BVA din test_boundary_value_analysis.py
        (BVA_price_just_above_zero).

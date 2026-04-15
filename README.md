@@ -22,7 +22,7 @@ anulări cu promovare automată din waitlist.
 
 **Tipuri de clase valide:** `"dance"`, `"pilates"`, `"yoga"`, `"zumba"`  
 **Capacitate:** 1–30 locuri confirmate + max 5 pe waitlist  
-**Validări `max_spots`:** trebuie să fie `int` (nu `float`); `False` (== 0) este respins prin condiția `< 1`
+**Validări `max_spots`:** trebuie să fie `int` pur (nu `float`, nu `bool`); `True` și `False` sunt respinse explicit prin verificarea `isinstance(max_spots, bool)`
 
 ---
 
@@ -106,11 +106,13 @@ N1 [intrare]
 N2: if class_name not in VALID_CLASSES
  │ True             │ False
  ▼                  ▼
-N3: raise      N4: if not instructor or not instructor.strip()
-ValueError      │ True             │ False
+N3: raise      N4: if not isinstance(instructor, str)
+ValueError           or not instructor or not instructor.strip()
+ │              │ True             │ False
  │              ▼                  ▼
- │         N5: raise          N6: if not isinstance(max_spots, int)
- │         ValueError              or max_spots < 1 or > 30
+ │         N5: raise          N6: if isinstance(max_spots, bool)
+ │         ValueError              or not isinstance(max_spots, int)
+ │                                 or max_spots < 1 or > 30
  │              │               │ True        │ False
  │              │               ▼             ▼
  │              │         N7: raise      N8: if price_per_session <= 0
@@ -178,16 +180,18 @@ ValueError          │
  │             N5: if has_membership   ← D7
  │              │ True    │ False
  │              ▼         │
- │         N6: ×0.80      │
+ │         N6: discount   │
+ │             += 0.20    │
  │              └────┬────┘
  │                   ▼
  │             N7: if sessions >= 10   ← D8
  │              │ True    │ False
  │              ▼         │
- │         N8: ×0.90      │
+ │         N8: discount   │
+ │             += 0.10    │
  │              └────┬────┘
  │                   ▼
- │             N9: return round(cost, 2)
+ │             N9: return round(cost × (1−discount), 2)
  │                   │
  └───────────────────┘
                      │

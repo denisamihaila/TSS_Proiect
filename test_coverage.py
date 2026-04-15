@@ -150,7 +150,7 @@ class TestDecisionCoverage(unittest.TestCase):
     Decizii identificate:
     ─────────────────────────────────────────────────────────────────────────
     book_spot (3 decizii):
-        D1: if not client_name or not client_name.strip()
+        D1: if not isinstance(client_name, str) or not client_name or not client_name.strip()
         D2: if self.booked_spots < self.max_spots
         D3: elif len(self.waitlist) < MAX_WAITLIST_SIZE
 
