@@ -39,6 +39,11 @@ class TestBoundaryValueAnalysis(unittest.TestCase):
             BVA10  len(waitlist) = 4  (al 5-lea pe waitlist) → "waitlist"
             BVA11  len(waitlist) = 5  (al 6-lea refuzat)     → "rejected"
 
+    __init__ – price_per_session > 0 (frontiera la 0):
+        BVA21  price = -0.01 (sub frontieră, negativ) → ValueError
+        BVA22  price =  0.0  (la frontieră, invalid)  → ValueError
+        BVA23  price =  0.01 (imediat deasupra)       → valid  [ucide M22]
+
     calculate_cost – sessions ∈ [1, 20]:
         Frontiera inferioară la 1:
             BVA12  sessions = 0   (sub frontieră)   → ValueError
@@ -92,6 +97,29 @@ class TestBoundaryValueAnalysis(unittest.TestCase):
         Condiție: max_spots > 30."""
         with self.assertRaises(ValueError):
             FitnessClassBooking("dance", "Instructor", 31, 10.0)
+
+    # ── __init__ – price_per_session, frontiera la 0 ─────────────────
+
+    def test_init_price_negative_raises_value_error(self) -> None:
+        """BVA21: frontieră la 0; price=-0.01 (sub frontieră) → ValueError.
+        Condiție: price_per_session (-0.01) <= 0 este True."""
+        with self.assertRaises(ValueError):
+            FitnessClassBooking("yoga", "Instructor", 5, -0.01)
+
+    def test_init_price_zero_raises_value_error(self) -> None:
+        """BVA22: frontieră la 0; price=0.0 (exact la frontieră, invalid) → ValueError.
+        Condiție: price_per_session (0.0) <= 0 este True.
+        Regula este price > 0 (strict); 0 este exclus."""
+        with self.assertRaises(ValueError):
+            FitnessClassBooking("yoga", "Instructor", 5, 0.0)
+
+    def test_init_price_just_above_zero_is_valid(self) -> None:
+        """BVA23: frontieră la 0; price=0.01 (imediat deasupra) → valid.
+        Condiție: price_per_session (0.01) <= 0 este False → obiect creat.
+        Ucide M22 (price <= 1): 0.01 <= 1 = True → mutantul ridică ValueError (BUG!).
+        Testul eșuează pe M22 deoarece crearea obiectului aruncă excepție → FAIL."""
+        b = FitnessClassBooking("yoga", "Instructor", 5, 0.01)
+        self.assertAlmostEqual(b.price_per_session, 0.01)
 
     # ── book_spot – tranziție confirmed → waitlist ────────────────────
 

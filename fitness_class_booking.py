@@ -45,12 +45,11 @@ class FitnessClassBooking:
             raise ValueError(
                 f"class_name must be one of {sorted(self.VALID_CLASSES)}, got '{class_name}'"
             )
-        if not instructor or not instructor.strip():
+        if not isinstance(instructor, str) or not instructor or not instructor.strip():
             raise ValueError("instructor must be a non-empty string")
-        if not isinstance(max_spots, int) or isinstance(max_spots, bool) \
-                or max_spots < 1 or max_spots > 30:
+        if isinstance(max_spots, bool) or not isinstance(max_spots, int) or max_spots < 1 or max_spots > 30:
             raise ValueError("max_spots must be an integer between 1 and 30 inclusive")
-        if price_per_session <= 0:
+        if not isinstance(price_per_session, (int, float)) or price_per_session <= 0:
             raise ValueError("price_per_session must be greater than 0")
 
         self.class_name: str = class_name
@@ -73,7 +72,7 @@ class FitnessClassBooking:
             "rejected"  – class full and waitlist full (5 people).
         :raises ValueError: If client_name is empty or whitespace-only.
         """
-        if not client_name or not client_name.strip():
+        if not isinstance(client_name, str) or not client_name or not client_name.strip():
             raise ValueError("client_name must be a non-empty string")
 
         client = client_name.strip()
@@ -129,7 +128,7 @@ class FitnessClassBooking:
         :return: Total cost rounded to 2 decimal places.
         :raises ValueError: If sessions < 1 or sessions > 20.
         """
-        if sessions < 1 or sessions > 20:
+        if not isinstance(sessions, int) or isinstance(sessions, bool) or sessions < 1 or sessions > 20:
             raise ValueError(
                 f"sessions must be between 1 and 20 inclusive, got {sessions}"
             )
@@ -143,19 +142,3 @@ class FitnessClassBooking:
             cost *= 0.90  # additional 10% volume discount
 
         return round(cost, 2)
-
-    # ------------------------------------------------------------------
-    def get_availability(self) -> dict:
-        """
-        Return the current availability status of the class.
-
-        :return: Dictionary with keys:
-                    "free"     – remaining bookable spots
-                    "booked"   – current confirmed bookings
-                    "waitlist" – number of people on the waitlist
-        """
-        return {
-            "free": self.max_spots - self.booked_spots,
-            "booked": self.booked_spots,
-            "waitlist": len(self.waitlist),
-        }

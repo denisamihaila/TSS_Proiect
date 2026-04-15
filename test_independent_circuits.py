@@ -13,6 +13,52 @@ Proiect TSS – T1 | FitnessClassBooking
 # =============================================================================
 #
 # ─────────────────────────────────────────────────────────────────────────────
+# METODA: __init__(class_name, instructor, max_spots, price_per_session)
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# Cod simplificat (fiecare condiție compusă tratată ca o singură decizie):
+#   (1) if class_name not in VALID_CLASSES:                        raise ValueError
+#   (2) if not instructor or not instructor.strip():                raise ValueError
+#   (3) if not isinstance(max_spots,int) or max_spots<1 or >30:    raise ValueError
+#   (4) if price_per_session <= 0:                                  raise ValueError
+#   (5) self.class_name = ...; self.instructor = ...; ...          [assignments]
+#
+# Graf de flux de control (CFG):
+#
+#   N1 [intrare]
+#    │
+#    ▼
+#   N2: if class_name not in VALID_CLASSES
+#    │ True             │ False
+#    ▼                  ▼
+#   N3: raise       N4: if not instructor or not instructor.strip()
+#   ValueError       │ True             │ False
+#    │               ▼                  ▼
+#    │           N5: raise         N6: if [max_spots invalid]
+#    │           ValueError         │ True        │ False
+#    │               │              ▼              ▼
+#    │               │         N7: raise     N8: if price_per_session <= 0
+#    │               │         ValueError     │ True        │ False
+#    │               │              │         ▼             ▼
+#    │               │              │    N9: raise     N10: assignments
+#    │               │              │    ValueError        │
+#    └───────────────┴──────────────┴─────────────────────┘
+#                                                          │
+#                                                       [Nexit]
+#
+# Calcul:
+#   Decizii: D1 (N2), D2 (N4), D3 (N6), D4 (N8) → V(G) = 4 + 1 = 5
+#
+# Circuite independente (baza):
+#   PATH_INIT_1: N1→N2(T)→N3→Nexit              [D1=T]              → ValueError class_name
+#   PATH_INIT_2: N1→N2(F)→N4(T)→N5→Nexit        [D1=F, D2=T]        → ValueError instructor
+#   PATH_INIT_3: N1→N2(F)→N4(F)→N6(T)→N7→Nexit  [D1=F, D2=F, D3=T] → ValueError max_spots
+#   PATH_INIT_4: N1→N2(F)→N4(F)→N6(F)→N8(T)→N9→Nexit [D1..3=F,D4=T]→ ValueError price
+#   PATH_INIT_5: N1→N2(F)→N4(F)→N6(F)→N8(F)→N10→Nexit [toate=F]    → obiect creat
+#
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# ─────────────────────────────────────────────────────────────────────────────
 # METODA: book_spot(client_name)
 # ─────────────────────────────────────────────────────────────────────────────
 #
@@ -66,46 +112,53 @@ Proiect TSS – T1 | FitnessClassBooking
 # METODA: calculate_cost(sessions, has_membership)
 # ─────────────────────────────────────────────────────────────────────────────
 #
-# Cod simplificat (logica de business, excluzând garda de validare):
-#   (1) cost = sessions * price_per_session
-#   (2) if has_membership:   cost *= 0.80
-#   (3) if sessions >= 10:   cost *= 0.90
-#   (4) return round(cost, 2)
+# Cod complet (inclusiv garda de validare):
+#   (1) if sessions < 1 or sessions > 20:  raise ValueError   ← D_guard
+#   (2) cost = sessions * price_per_session
+#   (3) if has_membership:   cost *= 0.80                     ← D7
+#   (4) if sessions >= 10:   cost *= 0.90                     ← D8
+#   (5) return round(cost, 2)
 #
 # Graf de flux de control (CFG):
 #
-#   N1 [intrare + compute base cost]
+#   N1 [intrare]
 #    │
 #    ▼
-#   N2: if has_membership
+#   N2: if sessions < 1 or sessions > 20   ← D_guard
 #    │ True             │ False
-#    ▼                  │
-#   N3: cost *= 0.80    │
-#    │                  │
-#    └──────────────────┘
-#                       │
-#                       ▼
-#                  N4: if sessions >= 10
-#                   │ True         │ False
-#                   ▼              │
-#              N5: cost *= 0.90    │
-#                   │              │
-#                   └──────────────┘
-#                                  │
-#                             N6: return round(cost, 2)
-#                                  │
-#                               [Nexit]
+#    ▼                  ▼
+#   N3: raise      N4: cost = sessions × price
+#   ValueError          │
+#    │                  ▼
+#    │             N5: if has_membership   ← D7
+#    │              │ True    │ False
+#    │              ▼         │
+#    │         N6: ×0.80      │
+#    │              └────┬────┘
+#    │                   ▼
+#    │             N7: if sessions >= 10   ← D8
+#    │              │ True    │ False
+#    │              ▼         │
+#    │         N8: ×0.90      │
+#    │              └────┬────┘
+#    │                   ▼
+#    │             N9: return round(cost, 2)
+#    │                   │
+#    └───────────────────┘
+#                        │
+#                     [Nexit]
 #
 # Calcul:
-#   V(G) = nr_decizii_principale + 1 = 2 + 1 = 3
-#   (Nota: validarea sessions < 1 or > 20 este o gardă separată
-#    și nu face parte din logica algoritmică principală)
+#   Decizii: D_guard (N2), D7 (N5), D8 (N7) → V(G) = 3 + 1 = 4
+#   Garda de validare (N2) este o decizie reală din metodă și se include
+#   în CFG; a o exclude ar subevalua complexitatea metodei.
 #
 # Circuite independente (baza):
-#   PATH_CC_1: N1→N2→N4→N6→Nexit      [D7=F, D8=F] → cost de bază
-#   PATH_CC_2: N1→N2→N3→N4→N6→Nexit   [D7=T, D8=F] → 20% off
-#   PATH_CC_3: N1→N2→N4→N5→N6→Nexit   [D7=F, D8=T] → 10% off
-#   (Combinația D7=T, D8=T nu este un circuit independent nou în baza McCabe)
+#   PATH_CC_1: N1→N2(T)→N3→Nexit                    [D_guard=T]          → ValueError
+#   PATH_CC_2: N1→N2(F)→N4→N5(F)→N7(F)→N9→Nexit    [D_guard=F,D7=F,D8=F]→ cost de bază
+#   PATH_CC_3: N1→N2(F)→N4→N5(T)→N6→N7(F)→N9→Nexit [D_guard=F,D7=T,D8=F]→ 20% off
+#   PATH_CC_4: N1→N2(F)→N4→N5(F)→N7(T)→N8→N9→Nexit [D_guard=F,D7=F,D8=T]→ 10% off
+#   (Combinația D7=T,D8=T nu generează un circuit nou independent în baza McCabe)
 #
 # ─────────────────────────────────────────────────────────────────────────────
 # METODA: cancel_booking(client_name)
@@ -194,37 +247,52 @@ class TestIndependentCircuitsBookSpot(unittest.TestCase):
 
 class TestIndependentCircuitsCalculateCost(unittest.TestCase):
     """
-    Teste pentru cele V(G)=3 circuite independente ale metodei calculate_cost.
+    Teste pentru cele V(G)=4 circuite independente ale metodei calculate_cost.
+
+    V(G) = 4 deoarece există 3 decizii reale în metodă:
+      D_guard : if sessions < 1 or sessions > 20  (garda de validare)
+      D7      : if has_membership
+      D8      : if sessions >= 10
+    V(G) = 3 + 1 = 4
     """
 
     def setUp(self) -> None:
         # price_per_session = 10.0 pentru calcule simple
         self.b = FitnessClassBooking("pilates", "Ion Pop", 10, 10.0)
 
-    def test_cc_path1_no_membership_below_10_sessions_base_cost(self) -> None:
+    def test_cc_path1_invalid_sessions_raises_value_error(self) -> None:
         """
-        Path PATH_CC_1: N1→N2(False)→N4(False)→N6→Nexit
-        Condiție: has_membership=False (D7=F), sessions=5 < 10 (D8=F).
+        Path PATH_CC_1: N1→N2(True)→N3→Nexit
+        Condiție: sessions=0 → D_guard=True → raise ValueError.
+        Circuit acoperit: calea excepției la garda de validare.
+        """
+        with self.assertRaises(ValueError):
+            self.b.calculate_cost(0, False)
+
+    def test_cc_path2_no_membership_below_10_sessions_base_cost(self) -> None:
+        """
+        Path PATH_CC_2: N1→N2(False)→N4→N5(False)→N7(False)→N9→Nexit
+        Condiție: D_guard=F, has_membership=False (D7=F), sessions=5 < 10 (D8=F).
         Nicio reducere → cost = 5 × 10.0 = 50.0.
         Circuit acoperit: calea fără nicio reducere.
         """
         cost = self.b.calculate_cost(5, False)
         self.assertAlmostEqual(cost, 50.0)
 
-    def test_cc_path2_with_membership_below_10_sessions_membership_discount(self) -> None:
+    def test_cc_path3_with_membership_below_10_sessions_membership_discount(self) -> None:
         """
-        Path PATH_CC_2: N1→N2(True)→N3→N4(False)→N6→Nexit
-        Condiție: has_membership=True (D7=T), sessions=5 < 10 (D8=F).
+        Path PATH_CC_3: N1→N2(False)→N4→N5(True)→N6→N7(False)→N9→Nexit
+        Condiție: D_guard=F, has_membership=True (D7=T), sessions=5 < 10 (D8=F).
         Reducere membership 20% → cost = 5 × 10.0 × 0.80 = 40.0.
         Circuit acoperit: calea cu doar reducere de membership.
         """
         cost = self.b.calculate_cost(5, True)
         self.assertAlmostEqual(cost, 40.0)
 
-    def test_cc_path3_no_membership_ten_sessions_volume_discount(self) -> None:
+    def test_cc_path4_no_membership_ten_sessions_volume_discount(self) -> None:
         """
-        Path PATH_CC_3: N1→N2(False)→N4(True)→N5→N6→Nexit
-        Condiție: has_membership=False (D7=F), sessions=10 >= 10 (D8=T).
+        Path PATH_CC_4: N1→N2(False)→N4→N5(False)→N7(True)→N8→N9→Nexit
+        Condiție: D_guard=F, has_membership=False (D7=F), sessions=10 >= 10 (D8=T).
         Reducere volum 10% → cost = 10 × 10.0 × 0.90 = 90.0.
         Circuit acoperit: calea cu doar reducere de volum.
         """
@@ -286,6 +354,67 @@ class TestIndependentCircuitsCancelBooking(unittest.TestCase):
         """
         result = self.b.cancel_booking("GhostClient")
         self.assertFalse(result)
+
+
+class TestIndependentCircuitsInit(unittest.TestCase):
+    """
+    Teste pentru cele V(G)=5 circuite independente ale metodei __init__.
+
+    Fiecare test acoperă exact un circuit din baza McCabe,
+    urmând structura CFG descrisă în antetul fișierului.
+    """
+
+    def test_init_path1_invalid_class_name_raises_value_error(self) -> None:
+        """
+        Path PATH_INIT_1: N1→N2(True)→N3→Nexit
+        Condiție: class_name='crossfit' ∉ VALID_CLASSES (D1=True) → ValueError.
+        Circuit acoperit: calea excepției la primul punct de validare.
+        """
+        with self.assertRaises(ValueError):
+            FitnessClassBooking("crossfit", "Instructor", 5, 10.0)
+
+    def test_init_path2_invalid_instructor_raises_value_error(self) -> None:
+        """
+        Path PATH_INIT_2: N1→N2(False)→N4(True)→N5→Nexit
+        Condiție: class_name valid (D1=F), instructor='' → not ''=True (D2=T) → ValueError.
+        Circuit acoperit: calea excepției la validarea instructor.
+        """
+        with self.assertRaises(ValueError):
+            FitnessClassBooking("yoga", "", 5, 10.0)
+
+    def test_init_path3_invalid_max_spots_raises_value_error(self) -> None:
+        """
+        Path PATH_INIT_3: N1→N2(False)→N4(False)→N6(True)→N7→Nexit
+        Condiție: class_name valid (D1=F), instructor valid (D2=F),
+                  max_spots=0 → max_spots < 1 = True (D3=T) → ValueError.
+        Circuit acoperit: calea excepției la validarea max_spots.
+        """
+        with self.assertRaises(ValueError):
+            FitnessClassBooking("yoga", "Instructor", 0, 10.0)
+
+    def test_init_path4_invalid_price_raises_value_error(self) -> None:
+        """
+        Path PATH_INIT_4: N1→N2(F)→N4(F)→N6(F)→N8(True)→N9→Nexit
+        Condiție: class_name valid (D1=F), instructor valid (D2=F),
+                  max_spots valid (D3=F), price=0.0 → price <= 0 = True (D4=T) → ValueError.
+        Circuit acoperit: calea excepției la validarea prețului.
+        """
+        with self.assertRaises(ValueError):
+            FitnessClassBooking("yoga", "Instructor", 5, 0.0)
+
+    def test_init_path5_all_valid_creates_object(self) -> None:
+        """
+        Path PATH_INIT_5: N1→N2(F)→N4(F)→N6(F)→N8(False)→N10→Nexit
+        Condiție: toți parametrii valizi (toate deciziile False) → obiect creat.
+        Circuit acoperit: calea fericită – toate validările trec.
+        """
+        b = FitnessClassBooking("pilates", "Maria Pop", 10, 25.0)
+        self.assertEqual(b.class_name, "pilates")
+        self.assertEqual(b.instructor, "Maria Pop")
+        self.assertEqual(b.max_spots, 10)
+        self.assertAlmostEqual(b.price_per_session, 25.0)
+        self.assertEqual(b.booked_spots, 0)
+        self.assertEqual(b.waitlist, [])
 
 
 if __name__ == "__main__":

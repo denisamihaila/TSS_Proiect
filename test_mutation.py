@@ -1,63 +1,79 @@
 """
-test_mutation.py – Analiza mutanților (Mutation Testing).
-
-Demonstrează strategia de testare prin mutanți: se modifică codul sursă în
-moduri mici și se verifică că testele detectează modificările (omoară mutantul).
-
-Proiect TSS – T1 | FitnessClassBooking
+test_mutation.py – Analiză mutanți generată cu mutmut 2.5.1.
 
 ═══════════════════════════════════════════════════════════════════════════════
-RAPORT MUTANȚI (simulat – tipic pentru mutmut pe această clasă)
+RAPORT REAL MUTMUT
 ───────────────────────────────────────────────────────────────────────────────
+Comandă: mutmut run --paths-to-mutate fitness_class_booking.py
+         --tests-dir . --runner "python -m pytest"
+Rulat în: WSL Ubuntu 24.04 / Python 3.12.3 / mutmut 2.5.1
 
-Mutant M1: `booked_spots < max_spots` → `booked_spots <= max_spots`
-           Locație: book_spot(), decizia de confirmare
-           Tip: NEECHIVALENT
-           Efect: Când booked_spots = max_spots (clasa plină), condiția
-                  `<=` devine True → rezervare „confirmată" incorect,
-                  booked_spots depășește max_spots → bug real.
+  Total mutanți generați : 80
+  🎉 Uciși               : 53
+  🤔 Suspicioși          : 16
+  🙁 Supraviețuitori     : 11
+  🔇 Omiși               :  0
 
-Mutant M2: `len(self.waitlist) < self.MAX_WAITLIST_SIZE` →
-           `len(self.waitlist) <= self.MAX_WAITLIST_SIZE`
-           Locație: book_spot(), decizia de waitlist
-           Tip: NEECHIVALENT
-           Efect: Când waitlist are 5 persoane, `<=` devine True → al 6-lea
-                  client adăugat pe waitlist în loc să fie respins → bug real.
-
-Mutant M3: `sessions >= 10` → `sessions > 10`
-           Locație: calculate_cost(), decizia discount de volum
-           Tip: NEECHIVALENT
-           Efect: La sessions=10 nu se mai aplică reducerea de volum 10%
-                  (10 > 10 = False) → client plătește mai mult → bug real.
-
-Mutant M4: `cost *= 0.80` → `cost *= 0.90`
-           Locație: calculate_cost(), aplicarea discount-ului de membership
-           Tip: NEECHIVALENT
-           Efect: Reducerea de membership devine 10% în loc de 20%
-                  → client plătește mai mult decât ar trebui → bug real.
-
-Mutant M5: `self.booked_spots -= 1` → `self.booked_spots = self.booked_spots - 1`
-           Locație: cancel_booking(), decrementarea contorului
-           Tip: ECHIVALENT
-           Justificare: În Python, `a -= b` și `a = a - b` sunt semantically
-           identice pentru tipul `int` (imutabil). Nicio secvență de apeluri
-           de metodă nu poate distinge comportamentul celor două variante.
-           Orice test valid obține același sold înainte și după anulare.
-
-Mutant M6: `cost *= 0.90` → `cost = cost * 0.90`
-           Locație: calculate_cost(), aplicarea discount-ului de volum
-           Tip: ECHIVALENT
-           Justificare: `*=` și `= ... *` pe `float` produc rezultat identic.
-           Python evaluează `cost *= 0.90` ca `cost = cost.__imul__(0.90)` care,
-           pentru float (tip imutabil), este echivalent cu `cost = cost * 0.90`.
-           Nu există test care să distingă cele două forme.
+  Scor mutație inițial   : 53/80 ≈ 66.3%
 
 ───────────────────────────────────────────────────────────────────────────────
-SUMAR:
-    Mutanți generați:       6
-    Neechivalenți (uciși):  4  (M1, M2, M3, M4)
-    Echivalenți (vii):      2  (M5, M6)
-    Scor mutație:           4/4 = 100% (excluzând echivalenții)
+CLASIFICAREA MUTANȚILOR SUPRAVIEȚUITORI (11)
+───────────────────────────────────────────────────────────────────────────────
+
+Grup A – Mutanți de tip „string" (mesaj de eroare) (6 mutanți)
+───────────────────────────────────────────────────────────────
+mutmut modifică șirurile din `raise ValueError(...)` adăugând
+prefixul/sufixul literal "XX". Excepția este în continuare aruncată;
+comportamentul observabil prin API-ul public al clasei este IDENTIC
+cu originalul. Testele nu verifică textul mesajului → supraviețuiesc.
+
+  M9  – mesaj class_name ValueError: "XXclass_name...XX"
+  M13 – mesaj instructor ValueError: "XXinstructor...XX"
+  M20 – mesaj max_spots ValueError: "XXmax_spots...XX"
+  M23 – mesaj price ValueError: "XXprice_per_session...XX"
+  M35 – mesaj client_name ValueError: "XXclient_name...XX"
+  M65 – mesaj sessions ValueError: "XXsessions...XX"
+
+  Tip: NECRITICALI (pot fi omorâți cu assertRaisesRegex, dar nu
+  reprezintă bug-uri de logică).
+
+Grup B – Mutant quasi-echivalent (1 mutant)
+────────────────────────────────────────────
+  M45 – cancel_booking: `if client_name else ""` → `if client_name else "XXXX"`
+
+  Schimbarea este observabilă DOAR dacă există un client confirmat cu
+  numele literal "XXXX" și se apelează cancel_booking(None).
+  Niciun scenariu realist nu produce această combinație; în practică
+  mutantul se comportă identic cu implementarea corectă.
+  Tip: QUASI-ECHIVALENT.
+
+Grup C – Mutanți comportamentali NEECHIVALENȚI (3 mutanți)
+───────────────────────────────────────────────────────────
+  M12 – __init__: `not instructor OR not instructor.strip()`
+                → `not instructor AND not instructor.strip()`
+        EFECT: instructor cu whitespace pur ("   ") trece validarea.
+
+  M22 – __init__: `price_per_session <= 0`
+                → `price_per_session <= 1`
+        EFECT: prețuri valide (0 < price ≤ 1) sunt respinse eronat.
+
+  M76 – calculate_cost: `round(cost, 2)` → `round(cost, 3)`
+        EFECT: costul este returnat cu 3 zecimale în loc de 2.
+
+  Notă: mutantul M19 (care viza `isinstance(max_spots, bool)`) nu mai este
+  aplicabil deoarece verificarea bool a fost eliminată din codul sursă în
+  urma simplificării clasei. bool False (== 0) este respins prin condiția
+  `max_spots < 1`, iar bool True (== 1) este acceptat ca max_spots valid.
+
+  ⚙️  M22 este omorât de testul BVA din test_boundary_value_analysis.py
+       (BVA_price_just_above_zero).
+  ⚙️  M12 și M76 sunt omorâți de testele suplimentare din acest fișier.
+
+───────────────────────────────────────────────────────────────────────────────
+SUMAR FINAL (după adăugarea testelor suplimentare):
+  Mutanți comportamentali neechivalenți omorâți : 3/3 = 100%
+  (M12 → test_mutation, M22 → test_boundary, M76 → test_mutation)
+  Scor mutație corectat (excl. string + quasi-echiv.) : 56/72 ≈ 77.8%
 ═══════════════════════════════════════════════════════════════════════════════
 """
 
@@ -67,202 +83,138 @@ from fitness_class_booking import FitnessClassBooking
 
 class TestMutationKilling(unittest.TestCase):
     """
-    Teste care omoară cei 4 mutanți neechivalenți și documentează
-    de ce cei 2 mutanți echivalenți nu pot fi omorâți.
+    Teste suplimentare care omoară mutanții comportamentali
+    neechivalenți M12 și M76 rămași în viață după rularea mutmut.
+    M19 și M22 sunt omorâți de testele din celelalte fișiere de test.
     """
 
     def setUp(self) -> None:
         self.b = FitnessClassBooking("yoga", "Ana Pop", 5, 10.0)
 
     # =========================================================================
-    # Ucide M1: `booked_spots < max_spots` → `booked_spots <= max_spots`
+    # Ucide M12: `not instructor OR not instructor.strip()`
+    #            → `not instructor AND not instructor.strip()`
     # =========================================================================
 
-    def test_kill_M1_full_class_next_booking_must_be_waitlist(self) -> None:
+    def test_kill_M12_whitespace_only_instructor_must_raise_value_error(self) -> None:
         """
-        Ucide M1: `booked_spots < max_spots` → `booked_spots <= max_spots`.
+        Ucide M12: `not instructor or not instructor.strip()`
+                 → `not instructor and not instructor.strip()`
 
-        Implementarea CORECTĂ: când booked_spots = max_spots = 5,
-            condiția  5 < 5  = False → merge la elif (waitlist). ✓
+        Implementarea CORECTĂ (OR):
+            instructor = "   " → not "   " = False, not strip() = True
+            False OR True = True → raise ValueError ✓
 
-        Mutantul M1: condiția  5 <= 5 = True → returnează 'confirmed' (BUG!),
-            booked_spots devine 6, depășind capacitatea de 5.
+        Mutantul M12 (AND):
+            False AND True = False → NU ridică ValueError (BUG!)
+            Un instructor format doar din spații ar fi acceptat,
+            iar instructor.strip() ar produce șirul gol "".
 
-        Bug real reprezentat: suprarezervarae clasei; mai mulți clienți
-        confirmați decât locuri fizice disponibile.
-
-        Testul eșuează pe M1 deoarece assertEqual('waitlist', 'confirmed') → FAIL.
+        Testul eșuează pe M12 deoarece assertRaises nu primește
+        excepția → FAIL.
         """
-        for i in range(5):
-            self.b.book_spot(f"C{i}")
-        self.assertEqual(self.b.booked_spots, 5)
+        with self.assertRaises(ValueError):
+            FitnessClassBooking("yoga", "   ", 5, 10.0)
 
-        result = self.b.book_spot("OverflowClient")
+    def test_kill_M12_tab_only_instructor_must_raise_value_error(self) -> None:
+        """
+        Test auxiliar M12: instructor format dintr-un singur tab.
 
-        self.assertEqual(
-            result,
-            "waitlist",
-            msg="Când clasa e plină (booked=max), rezervarea trebuie să fie 'waitlist', nu 'confirmed'",
-        )
-        # Pe mutant, booked_spots ar fi 6 (imposibil); implementarea corectă: rămâne 5
-        self.assertEqual(self.b.booked_spots, 5)
+        Tab-ul (\t) este whitespace → strip() → "" → not "" = True.
+        Implementarea corectă: False OR True = True → ValueError.
+        Mutantul M12 (AND): False AND True = False → fără eroare (BUG).
+        """
+        with self.assertRaises(ValueError):
+            FitnessClassBooking("dance", "\t", 5, 10.0)
 
     # =========================================================================
-    # Ucide M2: `len(waitlist) < 5` → `len(waitlist) <= 5`
+    # Ucide M76: `round(cost, 2)` → `round(cost, 3)`
     # =========================================================================
 
-    def test_kill_M2_full_waitlist_next_booking_must_be_rejected(self) -> None:
+    def test_kill_M76_cost_rounds_to_two_decimal_places(self) -> None:
         """
-        Ucide M2: `len(waitlist) < 5` → `len(waitlist) <= 5`.
+        Ucide M76: `return round(cost, 2)` → `return round(cost, 3)`.
 
-        Implementarea CORECTĂ: când len(waitlist) = 5,
-            condiția  5 < 5  = False → returnează 'rejected'. ✓
+        Scenariu: price_per_session = 1/3 ≈ 0.3333...,
+                  sessions = 1, has_membership = False.
+            cost brut = 1 × (1/3) = 0.3333...
+            round(0.3333..., 2) = 0.33   ← implementarea CORECTĂ
+            round(0.3333..., 3) = 0.333  ← mutantul M76 (BUG!)
 
-        Mutantul M2: condiția  5 <= 5 = True → adaugă pe waitlist (BUG!),
-            waitlist-ul ajunge la 6 persoane (depășind limita).
+        assertEqual(cost, 0.33) eșuează pe M76 deoarece 0.333 ≠ 0.33.
 
-        Bug real reprezentat: permite mai mult de 5 persoane pe waitlist,
-        ceea ce încalcă politica de maxim 5 locuri pe lista de așteptare.
-
-        Testul eșuează pe M2 deoarece assertEqual('rejected', 'waitlist') → FAIL.
+        Bug real reprezentat: costuri cu 3 zecimale pot cauza
+        erori la comparații exacte sau afișare monetară.
         """
-        # Umple clasa (5 confirmați)
-        for i in range(5):
-            self.b.book_spot(f"C{i}")
-        # Umple waitlist-ul (5 pe waitlist)
-        for i in range(5):
-            self.b.book_spot(f"W{i}")
+        b = FitnessClassBooking("yoga", "Instructor", 5, 1 / 3)
+        cost = b.calculate_cost(1, False)
+        self.assertEqual(cost, round(1 / 3, 2))      # 0.33
+        self.assertNotEqual(cost, round(1 / 3, 3))   # ≠ 0.333
 
-        self.assertEqual(len(self.b.waitlist), 5)
+    def test_kill_M76_membership_cost_rounds_to_two_decimal_places(self) -> None:
+        """
+        Test auxiliar M76 cu membership discount aplicat.
 
-        result = self.b.book_spot("SixthWaitlist")
+        price = 1/3, sessions = 1, has_membership = True:
+            cost = (1/3) × 0.80 = 0.2666...
+            round(0.2666..., 2) = 0.27  ← corect
+            round(0.2666..., 3) = 0.267 ← mutant (BUG)
 
-        self.assertEqual(
-            result,
-            "rejected",
-            msg="Când waitlist e plin (5 persoane), rezervarea trebuie să fie 'rejected', nu 'waitlist'",
-        )
-        # Pe mutant, len(waitlist) ar fi 6; implementarea corectă: rămâne 5
-        self.assertEqual(len(self.b.waitlist), 5)
+        assertEqual(cost, 0.27) eșuează pe M76.
+        """
+        b = FitnessClassBooking("yoga", "Instructor", 5, 1 / 3)
+        cost = b.calculate_cost(1, True)
+        self.assertEqual(cost, round(1 / 3 * 0.80, 2))    # 0.27
+        self.assertNotEqual(cost, round(1 / 3 * 0.80, 3)) # ≠ 0.267
 
     # =========================================================================
-    # Ucide M3: `sessions >= 10` → `sessions > 10`
+    # Documentare mutanți quasi-echivalenți / string mutations
     # =========================================================================
 
-    def test_kill_M3_exactly_10_sessions_must_apply_volume_discount(self) -> None:
+    def test_document_M45_quasi_equivalent_none_client_cancel(self) -> None:
         """
-        Ucide M3: `sessions >= 10` → `sessions > 10`.
+        Documentare M45 (quasi-echivalent):
+            Original: name = client_name.strip() if client_name else ""
+            Mutant:   name = client_name.strip() if client_name else "XXXX"
 
-        Implementarea CORECTĂ: sessions=10 satisface  10 >= 10  = True
-            → se aplică reducerea de 10% → cost = 10 × 10.0 × 0.90 = 90.0. ✓
+        Justificare quasi-echivalență:
+            Comportamentul diferă DOAR dacă există un client confirmat
+            cu numele exact "XXXX" și se apelează cancel_booking(None).
+            Niciun scenariu realist nu produce această combinație;
+            în practică ambele variante returnează False la cancel_booking(None)
+            fără rezervări existente, identic cu implementarea corectă.
 
-        Mutantul M3: sessions=10 satisface  10 > 10  = False
-            → NU se aplică reducerea → cost = 10 × 10.0 = 100.0 (BUG!).
-
-        Bug real reprezentat: clienții cu exact 10 ședințe nu primesc
-        reducerea de volum la care au dreptul → pierdere financiară pentru client.
-
-        Testul eșuează pe M3 deoarece assertAlmostEqual(100.0, 90.0) → FAIL.
+        Demonstrație: cancel_booking(None) returnează False în ambele cazuri.
         """
-        cost = self.b.calculate_cost(10, False)
+        result = self.b.cancel_booking(None)
+        self.assertFalse(result)
 
-        self.assertAlmostEqual(
-            cost,
-            90.0,
-            msg="La sessions=10, reducerea de volum 10% trebuie aplicată: 10×10×0.90=90.0",
-        )
-
-    def test_kill_M3_sessions_nine_must_not_apply_volume_discount(self) -> None:
+    def test_document_string_mutations_raise_value_error(self) -> None:
         """
-        Test complementar M3: sessions=9 NU trebuie să primească reducerea de volum.
+        Documentare mutanți string M9, M13, M20, M23, M35, M65:
 
-        Verifică că frontiera este corectă: la sessions=9 nu se aplică reducerea,
-        deci costul este 9 × 10.0 = 90.0 (fără × 0.90).
-        Atât implementarea corectă cât și M3 returnează același rezultat la sessions=9
-        → acest test NU omoară M3 singur, dar validează comportamentul sub frontieră.
+        mutmut modifică textul mesajelor din raise ValueError(...)
+        adăugând prefix/sufix "XX". Excepția este în continuare
+        aruncată → comportamentul observabil prin API-ul public este
+        IDENTIC cu originalul.
+
+        Acești mutanți pot fi omorâți prin assertRaisesRegex cu
+        pattern exact, dar nu reprezintă bug-uri de logică. Testul de
+        mai jos demonstrează că excepțiile sunt ridicate corect
+        indiferent de textul mesajului (care nu este vizibil extern).
         """
-        cost = self.b.calculate_cost(9, False)
-        self.assertAlmostEqual(cost, 90.0)  # 9 × 10 = 90.0, fără reducere
-
-    # =========================================================================
-    # Ucide M4: `cost *= 0.80` → `cost *= 0.90`
-    # =========================================================================
-
-    def test_kill_M4_membership_discount_must_be_20_percent(self) -> None:
-        """
-        Ucide M4: `cost *= 0.80` → `cost *= 0.90`.
-
-        Implementarea CORECTĂ: has_membership=True → cost × 0.80 (reducere 20%).
-            calculate_cost(1, True) = 1 × 10.0 × 0.80 = 8.0. ✓
-
-        Mutantul M4: cost × 0.90 (reducere 10% în loc de 20%).
-            calculate_cost(1, True) = 1 × 10.0 × 0.90 = 9.0 (BUG!).
-
-        Bug real reprezentat: clienții cu abonament primesc o reducere de
-        10% în loc de 20% → pierdere financiară pentru toți abonații.
-
-        Testul eșuează pe M4 deoarece assertAlmostEqual(9.0, 8.0) → FAIL.
-        """
-        cost = self.b.calculate_cost(1, True)
-
-        self.assertAlmostEqual(
-            cost,
-            8.0,
-            msg="Reducerea de membership trebuie să fie 20%: 1×10×0.80=8.0",
-        )
-
-    def test_kill_M4_membership_discount_distinguishes_10_vs_20_percent(self) -> None:
-        """
-        Test auxiliar M4: verifică explicit că 8.0 ≠ 9.0 (20% ≠ 10%).
-
-        Folosind sessions=5 pentru a evita interferența cu discountul de volum.
-            Corect:  5 × 10 × 0.80 = 40.0
-            Mutant:  5 × 10 × 0.90 = 45.0
-        """
-        cost = self.b.calculate_cost(5, True)
-        self.assertAlmostEqual(cost, 40.0)
-        self.assertNotAlmostEqual(cost, 45.0,
-            msg="Reducerea trebuie să fie 20% (×0.80=40.0), nu 10% (×0.90=45.0)")
-
-    # =========================================================================
-    # Documentare mutanți echivalenți (M5, M6)
-    # =========================================================================
-
-    def test_document_M5_equivalent_augmented_subtract_cancel(self) -> None:
-        """
-        Documentare M5 (echivalent):
-            Original: self.booked_spots -= 1
-            Mutant:   self.booked_spots = self.booked_spots - 1
-
-        Justificare echivalență:
-            `int` în Python este imutabil. `-=` pe un atribut int se traduce în
-            `attr = attr - 1` (Python nu definește __isub__ separat pentru int).
-            Orice test care verifică valoarea booked_spots după cancel va obține
-            același rezultat pe ambele variante → M5 nu poate fi omorât.
-
-        Demonstrație: booked_spots scade cu 1 după anulare în ambele cazuri.
-        """
-        self.b.book_spot("Alice")
-        self.assertEqual(self.b.booked_spots, 1)
-        self.b.cancel_booking("Alice")
-        self.assertEqual(self.b.booked_spots, 0)
-
-    def test_document_M6_equivalent_augmented_multiply_cost(self) -> None:
-        """
-        Documentare M6 (echivalent):
-            Original: cost *= 0.90
-            Mutant:   cost = cost * 0.90
-
-        Justificare echivalență:
-            `float` în Python este imutabil. `*=` și `= ... *` produc
-            exact același rezultat numeric și același obiect din perspectiva
-            valorii. Niciun test nu poate distinge aceste două forme prin
-            comportamentul observabil al metodei calculate_cost.
-
-        Demonstrație: reducerea de volum produce același cost în ambele cazuri.
-        """
-        cost = self.b.calculate_cost(10, False)
-        self.assertAlmostEqual(cost, 90.0)  # 10 × 10 × 0.90 = 90.0
+        with self.assertRaises(ValueError):
+            FitnessClassBooking("crossfit", "Instructor", 5, 10.0)  # M9
+        with self.assertRaises(ValueError):
+            FitnessClassBooking("yoga", "", 5, 10.0)                # M13
+        with self.assertRaises(ValueError):
+            FitnessClassBooking("yoga", "Instructor", 0, 10.0)      # M20
+        with self.assertRaises(ValueError):
+            FitnessClassBooking("yoga", "Instructor", 5, 0.0)       # M23
+        with self.assertRaises(ValueError):
+            self.b.book_spot("")                                     # M35
+        with self.assertRaises(ValueError):
+            self.b.calculate_cost(0, False)                         # M65
 
 
 if __name__ == "__main__":

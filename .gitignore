@@ -1,29 +1,15 @@
-# Virtual environments
-.venv/
-venv/
-env/
-~/tss_venv/
-
-# Python cache
+# Python
 __pycache__/
-*.py[cod]
+*.pyc
 *.pyo
-
-# Coverage
-.coverage
-htmlcov/
-coverage.xml
-
-# mutmut
-.mutmut-cache
-
-# pytest
 .pytest_cache/
+htmlcov/
+.coverage
+.mutmut-cache
 
 # IDE
 .vscode/
 .idea/
 
-# OS
-.DS_Store
-Thumbs.db
+# Claude Code
+.claude/

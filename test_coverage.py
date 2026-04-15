@@ -27,57 +27,56 @@ class TestStatementCoverage(unittest.TestCase):
     """
 
     def setUp(self) -> None:
-        # Acoperă: __init__ valid → toate assignment-urile S5–S10
+        # Acoperă: __init__ valid → toate assignment-urile
         self.b = FitnessClassBooking("yoga", "Ana Pop", 5, 10.0)
-        self.target = FitnessClassBooking("dance", "Ion Popa", 3, 8.0)
 
     # ── __init__ ──────────────────────────────────────────────────────
 
-    # setUp acoperă deja __init__ cu argumente valide (S5–S10).
+    # setUp acoperă deja __init__ cu argumente valide.
 
     def test_sc_init_invalid_class_name(self) -> None:
-        """Acoperă: S1 (if class_name not in VALID_CLASSES → True), S2 (raise ValueError)."""
+        """Acoperă: if class_name not in VALID_CLASSES → True → raise ValueError."""
         with self.assertRaises(ValueError):
             FitnessClassBooking("boxing", "Instructor", 5, 10.0)
 
     def test_sc_init_empty_instructor(self) -> None:
-        """Acoperă: S3 (if not instructor → True), S4 (raise ValueError)."""
+        """Acoperă: if not instructor → True → raise ValueError."""
         with self.assertRaises(ValueError):
             FitnessClassBooking("yoga", "", 5, 10.0)
 
     def test_sc_init_invalid_max_spots(self) -> None:
-        """Acoperă: S5 (if max_spots invalid → True), S6 (raise ValueError)."""
+        """Acoperă: if [max_spots invalid] → True → raise ValueError."""
         with self.assertRaises(ValueError):
             FitnessClassBooking("yoga", "Instructor", 0, 10.0)
 
     def test_sc_init_invalid_price(self) -> None:
-        """Acoperă: S7 (if price_per_session <= 0 → True), S8 (raise ValueError)."""
+        """Acoperă: if price_per_session <= 0 → True → raise ValueError."""
         with self.assertRaises(ValueError):
             FitnessClassBooking("yoga", "Instructor", 5, -1.0)
 
     # ── book_spot ─────────────────────────────────────────────────────
 
     def test_sc_book_spot_empty_name_raises(self) -> None:
-        """Acoperă: S11 (if not client_name → True), S12 (raise ValueError)."""
+        """Acoperă: if not client_name → True → raise ValueError."""
         with self.assertRaises(ValueError):
             self.b.book_spot("")
 
     def test_sc_book_spot_confirmed(self) -> None:
-        """Acoperă: S13 (client = strip), S14 (if booked < max → True),
-        S15-S17 (append, increment, return 'confirmed')."""
+        """Acoperă: client = strip(), if booked < max → True,
+        append confirmed, increment, return 'confirmed'."""
         result = self.b.book_spot("Alice")
         self.assertEqual(result, "confirmed")
 
     def test_sc_book_spot_waitlist(self) -> None:
-        """Acoperă: S14 (if booked < max → False), S18 (elif len(waitlist) < 5 → True),
-        S19-S20 (append waitlist, return 'waitlist')."""
+        """Acoperă: if booked < max → False, elif len(waitlist) < 5 → True,
+        append waitlist, return 'waitlist'."""
         for i in range(5):
             self.b.book_spot(f"C{i}")
         result = self.b.book_spot("WClient")
         self.assertEqual(result, "waitlist")
 
     def test_sc_book_spot_rejected(self) -> None:
-        """Acoperă: S18 (elif len(waitlist) < 5 → False), S21 (return 'rejected')."""
+        """Acoperă: elif len(waitlist) < 5 → False → return 'rejected'."""
         for i in range(5):
             self.b.book_spot(f"C{i}")
         for i in range(5):
@@ -88,14 +87,14 @@ class TestStatementCoverage(unittest.TestCase):
     # ── cancel_booking ────────────────────────────────────────────────
 
     def test_sc_cancel_confirmed_no_waitlist(self) -> None:
-        """Acoperă: S22 (name = strip), S23 (if name in confirmed → True),
-        S24-S25 (remove, decrement), S26 (if waitlist → False), S30 (return True)."""
+        """Acoperă: name = strip(), if name in confirmed → True,
+        remove, decrement, if waitlist → False, return True."""
         self.b.book_spot("Alice")
         result = self.b.cancel_booking("Alice")
         self.assertTrue(result)
 
     def test_sc_cancel_confirmed_with_waitlist_promotion(self) -> None:
-        """Acoperă: S26 (if waitlist → True), S27-S29 (pop, append, increment)."""
+        """Acoperă: if waitlist → True, pop, append promoted, increment."""
         for i in range(5):
             self.b.book_spot(f"C{i}")
         self.b.book_spot("Waitlisted")
@@ -103,8 +102,8 @@ class TestStatementCoverage(unittest.TestCase):
         self.assertIn("Waitlisted", self.b._confirmed)
 
     def test_sc_cancel_waitlist_client(self) -> None:
-        """Acoperă: S23 (if name in confirmed → False), S31 (elif name in waitlist → True),
-        S32 (remove from waitlist), S33 (return True)."""
+        """Acoperă: if name in confirmed → False, elif name in waitlist → True,
+        remove from waitlist, return True."""
         for i in range(5):
             self.b.book_spot(f"C{i}")
         self.b.book_spot("WClient")
@@ -112,41 +111,32 @@ class TestStatementCoverage(unittest.TestCase):
         self.assertTrue(result)
 
     def test_sc_cancel_not_found(self) -> None:
-        """Acoperă: S31 (elif name in waitlist → False), S34 (return False)."""
+        """Acoperă: elif name in waitlist → False → return False."""
         result = self.b.cancel_booking("Ghost")
         self.assertFalse(result)
 
     # ── calculate_cost ────────────────────────────────────────────────
 
     def test_sc_calculate_cost_invalid_sessions(self) -> None:
-        """Acoperă: S35 (if sessions < 1 or sessions > 20 → True), S36 (raise ValueError)."""
+        """Acoperă: if sessions < 1 or sessions > 20 → True → raise ValueError."""
         with self.assertRaises(ValueError):
             self.b.calculate_cost(0, False)
 
     def test_sc_calculate_cost_no_discounts(self) -> None:
-        """Acoperă: S37 (cost = sessions × price), S38 (if has_membership → False),
-        S40 (if sessions >= 10 → False), S42 (return round)."""
+        """Acoperă: cost = sessions × price, if has_membership → False,
+        if sessions >= 10 → False, return round(cost, 2)."""
         cost = self.b.calculate_cost(5, False)
         self.assertAlmostEqual(cost, 50.0)
 
     def test_sc_calculate_cost_membership_discount(self) -> None:
-        """Acoperă: S38 (if has_membership → True), S39 (cost *= 0.80)."""
+        """Acoperă: if has_membership → True → cost *= 0.80."""
         cost = self.b.calculate_cost(5, True)
         self.assertAlmostEqual(cost, 40.0)
 
     def test_sc_calculate_cost_volume_discount(self) -> None:
-        """Acoperă: S40 (if sessions >= 10 → True), S41 (cost *= 0.90)."""
+        """Acoperă: if sessions >= 10 → True → cost *= 0.90."""
         cost = self.b.calculate_cost(10, False)
         self.assertAlmostEqual(cost, 90.0)
-
-    # ── get_availability ──────────────────────────────────────────────
-
-    def test_sc_get_availability(self) -> None:
-        """Acoperă: S43 (return dict cu free, booked, waitlist)."""
-        avail = self.b.get_availability()
-        self.assertIn("free", avail)
-        self.assertIn("booked", avail)
-        self.assertIn("waitlist", avail)
 
 
 # =============================================================================
@@ -304,10 +294,19 @@ class TestConditionCoverage(unittest.TestCase):
 
     Condiții compuse identificate:
     ─────────────────────────────────────────────────────────────────────────
-    book_spot D1: `not client_name  OR  not client_name.strip()`
-        C1a  not client_name          → True (client_name="")  | False (client_name="x")
-        C1b  not client_name.strip()  → True (client_name=" ") | False (client_name="x")
-        (short-circuit: C1b evaluată doar când C1a=False)
+    __init__ – max_spots:
+        `isinstance(max_spots, bool) OR not isinstance(max_spots, int) OR max_spots < 1 OR max_spots > 30`
+        C_init_0  isinstance(max_spots, bool)    → True (True) | False (int 5)
+        C_init_1  not isinstance(max_spots, int) → True (float 1.0) | False (int 5)
+        C_init_2  max_spots < 1                  → True (0)         | False (5)
+        C_init_3  max_spots > 30                 → True (31)        | False (5)
+        (short-circuit OR: fiecare condiție e evaluată doar dacă toate precedentele = False)
+
+    book_spot D1: `not isinstance(client_name, str)  OR  not client_name  OR  not client_name.strip()`
+        C1pre  not isinstance(client_name, str)  → True (client_name=123) | False (client_name="x")
+        C1a    not client_name                   → True (client_name="")   | False (client_name="x")
+        C1b    not client_name.strip()           → True (client_name=" ")  | False (client_name="x")
+        (short-circuit: C1a evaluată doar când C1pre=False; C1b evaluată când C1a=False)
 
     calculate_cost – combinații independente ale D7 și D8:
         Chiar dacă în cod sunt 2 if-uri separate, comportamentul final
@@ -321,6 +320,47 @@ class TestConditionCoverage(unittest.TestCase):
 
     def setUp(self) -> None:
         self.b = FitnessClassBooking("yoga", "Ana Pop", 5, 10.0)
+
+    # ── C_init_1: not isinstance(max_spots, int) ──────────────────────
+
+    def test_cc_Cinit1_true_float_raises_value_error(self) -> None:
+        """C_init_1=True: max_spots=1.0 (float) → not isinstance(1.0, int) = True
+        → short-circuit OR → ValueError imediat, C_init_2..3 nu sunt evaluate."""
+        with self.assertRaises(ValueError):
+            FitnessClassBooking("yoga", "Instructor", 1.0, 10.0)
+
+    def test_cc_Cinit1_false_int_evaluates_Cinit2(self) -> None:
+        """C_init_1=False: max_spots=5 (int) → not isinstance(5, int) = False
+        → C_init_2 este evaluată (5 < 1 = False → C_init_3 evaluată)."""
+        b = FitnessClassBooking("yoga", "Instructor", 5, 10.0)
+        self.assertEqual(b.max_spots, 5)
+
+    # ── C_init_2: max_spots < 1 ───────────────────────────────────────
+
+    def test_cc_Cinit2_true_zero_raises_value_error(self) -> None:
+        """C_init_2=True: max_spots=0 → C_init_1=False (0 e int),
+        0 < 1 = True → OR → ValueError."""
+        with self.assertRaises(ValueError):
+            FitnessClassBooking("yoga", "Instructor", 0, 10.0)
+
+    def test_cc_Cinit2_false_positive_evaluates_Cinit3(self) -> None:
+        """C_init_2=False: max_spots=5 → 5 < 1 = False → C_init_3 evaluată."""
+        b = FitnessClassBooking("yoga", "Instructor", 5, 10.0)
+        self.assertEqual(b.max_spots, 5)
+
+    # ── C_init_3: max_spots > 30 ──────────────────────────────────────
+
+    def test_cc_Cinit3_true_over_limit_raises_value_error(self) -> None:
+        """C_init_3=True: max_spots=31 → C_init_1=False, C_init_2=False,
+        31 > 30 = True → OR → ValueError."""
+        with self.assertRaises(ValueError):
+            FitnessClassBooking("yoga", "Instructor", 31, 10.0)
+
+    def test_cc_Cinit3_false_all_conditions_false_valid(self) -> None:
+        """C_init_3=False: max_spots=30 → toate condițiile False → obiect creat.
+        Aceasta este singura combinație în care întreaga condiție compusă = False."""
+        b = FitnessClassBooking("yoga", "Instructor", 30, 10.0)
+        self.assertEqual(b.max_spots, 30)
 
     # ── C1a: not client_name ──────────────────────────────────────────
 
