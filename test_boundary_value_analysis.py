@@ -1,18 +1,9 @@
-"""
-test_boundary_value_analysis.py – Analiza valorilor de frontieră (BVA).
-
-Strategie: Se testează exact la frontieră, imediat sub și imediat deasupra
-fiecărei limite critice, deoarece bug-urile apar cel mai frecvent la granițe.
-"""
-
 import unittest
 from fitness_class_booking import FitnessClassBooking
 
 
 class TestBoundaryValueAnalysis(unittest.TestCase):
     """
-    Analiza valorilor de frontieră pentru FitnessClassBooking.
-
     ═══════════════════════════════════════════════════════════════════
     FRONTIERE IDENTIFICATE
     ───────────────────────────────────────────────────────────────────

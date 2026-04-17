@@ -130,7 +130,7 @@ ValueError           or not instructor or not instructor.strip()
 ### `book_spot` – V(G) = 4
 
 ```
-N1 → N2: if not client_name or not client_name.strip()
+N1 → N2: if not isinstance(client_name, str) or not client_name or not client_name.strip()
           │ True                  │ False
           ▼                       ▼
      N3: raise ValueError    N4: client = strip()
@@ -334,7 +334,7 @@ TSS_Proiect/
 └── README.md                         # Acest fișier
 ```
 
-**Total teste: 122 | Toate trec (0 eșuate)**
+**Total teste: 127 | Toate trec (0 eșuate)**
 
 ---
 

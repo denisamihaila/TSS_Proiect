@@ -1,12 +1,10 @@
 """
-test_coverage.py – Acoperire instrucțiuni, decizii și condiții.
+Acoperire instrucțiuni, decizii și condiții.
 
 Conține 3 clase de test:
     TestStatementCoverage   – 100% acoperire la nivel de instrucțiune
     TestDecisionCoverage    – 100% acoperire la nivel de decizie (True+False)
     TestConditionCoverage   – acoperire la nivel de condiție (condiții compuse)
-
-Proiect TSS – T1 | FitnessClassBooking
 """
 
 import unittest
@@ -19,7 +17,7 @@ from fitness_class_booking import FitnessClassBooking
 
 class TestStatementCoverage(unittest.TestCase):
     """
-    Suită minimă de teste care execută FIECARE instrucțiune din
+    Suită minimă de teste care execută fiecare instrucțiune din
     fitness_class_booking.py cel puțin o dată.
 
     Instrucțiunile sunt grupate pe metode; fiecare test documentează
@@ -32,7 +30,7 @@ class TestStatementCoverage(unittest.TestCase):
 
     # ── __init__ ──────────────────────────────────────────────────────
 
-    # setUp acoperă deja __init__ cu argumente valide.
+    # setUp acoperă __init__ cu argumente valide.
 
     def test_sc_init_invalid_class_name(self) -> None:
         """Acoperă: if class_name not in VALID_CLASSES → True → raise ValueError."""
@@ -168,7 +166,12 @@ class TestDecisionCoverage(unittest.TestCase):
     def setUp(self) -> None:
         self.b = FitnessClassBooking("yoga", "Ana Pop", 5, 10.0)
 
-    # ── D1: if not client_name or not client_name.strip() ─────────────
+    # ── D1: if not isinstance(client_name, str) or not client_name or not client_name.strip()
+
+    def test_dc_book_spot_D1_true_non_string_raises(self) -> None:
+        """Decision D1 → True: client_name=123 → not isinstance(123, str) = True → ValueError."""
+        with self.assertRaises(ValueError):
+            self.b.book_spot(123)
 
     def test_dc_book_spot_D1_true_empty_name_raises(self) -> None:
         """Decision D1 → True: client_name='' → not '' = True → ValueError."""
@@ -296,17 +299,17 @@ class TestConditionCoverage(unittest.TestCase):
     ─────────────────────────────────────────────────────────────────────────
     __init__ – max_spots:
         `isinstance(max_spots, bool) OR not isinstance(max_spots, int) OR max_spots < 1 OR max_spots > 30`
-        C_init_0  isinstance(max_spots, bool)    → True (True) | False (int 5)
-        C_init_1  not isinstance(max_spots, int) → True (float 1.0) | False (int 5)
-        C_init_2  max_spots < 1                  → True (0)         | False (5)
-        C_init_3  max_spots > 30                 → True (31)        | False (5)
+        C_init_isinstance_bool  isinstance(max_spots, bool)    → True (True) | False (int 5)
+        C_init_isinstance_int   not isinstance(max_spots, int) → True (float 1.0) | False (int 5)
+        C_init_min              max_spots < 1                  → True (0)         | False (5)
+        C_init_max              max_spots > 30                 → True (31)        | False (5)
         (short-circuit OR: fiecare condiție e evaluată doar dacă toate precedentele = False)
 
     book_spot D1: `not isinstance(client_name, str)  OR  not client_name  OR  not client_name.strip()`
-        C1pre  not isinstance(client_name, str)  → True (client_name=123) | False (client_name="x")
-        C1a    not client_name                   → True (client_name="")   | False (client_name="x")
-        C1b    not client_name.strip()           → True (client_name=" ")  | False (client_name="x")
-        (short-circuit: C1a evaluată doar când C1pre=False; C1b evaluată când C1a=False)
+        C1_isinstance  not isinstance(client_name, str)  → True (client_name=123) | False (client_name="x")
+        C1_empty       not client_name                   → True (client_name="")   | False (client_name="x")
+        C1_whitespace  not client_name.strip()           → True (client_name=" ")  | False (client_name="x")
+        (short-circuit: C1_empty evaluată doar când C1_isinstance=False; C1_whitespace evaluată când C1_empty=False)
 
     calculate_cost – combinații independente ale D7 și D8:
         Chiar dacă în cod sunt 2 if-uri separate, comportamentul final
@@ -321,70 +324,98 @@ class TestConditionCoverage(unittest.TestCase):
     def setUp(self) -> None:
         self.b = FitnessClassBooking("yoga", "Ana Pop", 5, 10.0)
 
-    # ── C_init_1: not isinstance(max_spots, int) ──────────────────────
+    # ── C_init_isinstance_bool: isinstance(max_spots, bool) ─────────
 
-    def test_cc_Cinit1_true_float_raises_value_error(self) -> None:
-        """C_init_1=True: max_spots=1.0 (float) → not isinstance(1.0, int) = True
-        → short-circuit OR → ValueError imediat, C_init_2..3 nu sunt evaluate."""
+    def test_cc_Cinit_isinstance_bool_true_bool_raises_value_error(self) -> None:
+        """C_init_isinstance_bool=True: max_spots=True (bool) → isinstance(True, bool) = True
+        → short-circuit OR → ValueError imediat, celelalte condiții nu sunt evaluate."""
         with self.assertRaises(ValueError):
-            FitnessClassBooking("yoga", "Instructor", 1.0, 10.0)
+            FitnessClassBooking("yoga", "Instructor", True, 10.0)
 
-    def test_cc_Cinit1_false_int_evaluates_Cinit2(self) -> None:
-        """C_init_1=False: max_spots=5 (int) → not isinstance(5, int) = False
-        → C_init_2 este evaluată (5 < 1 = False → C_init_3 evaluată)."""
+    def test_cc_Cinit_isinstance_bool_false_int_evaluates_next(self) -> None:
+        """C_init_isinstance_bool=False: max_spots=5 (int) → isinstance(5, bool) = False
+        → C_init_isinstance_int este evaluată."""
         b = FitnessClassBooking("yoga", "Instructor", 5, 10.0)
         self.assertEqual(b.max_spots, 5)
 
-    # ── C_init_2: max_spots < 1 ───────────────────────────────────────
+    # ── C_init_isinstance_int: not isinstance(max_spots, int) ────────
 
-    def test_cc_Cinit2_true_zero_raises_value_error(self) -> None:
-        """C_init_2=True: max_spots=0 → C_init_1=False (0 e int),
+    def test_cc_Cinit_isinstance_int_true_float_raises_value_error(self) -> None:
+        """C_init_isinstance_int=True: max_spots=1.0 (float) → not isinstance(1.0, int) = True
+        → short-circuit OR → ValueError imediat, C_init_min..max nu sunt evaluate."""
+        with self.assertRaises(ValueError):
+            FitnessClassBooking("yoga", "Instructor", 1.0, 10.0)
+
+    def test_cc_Cinit_isinstance_int_false_int_evaluates_next(self) -> None:
+        """C_init_isinstance_int=False: max_spots=5 (int) → not isinstance(5, int) = False
+        → C_init_min este evaluată (5 < 1 = False → C_init_max evaluată)."""
+        b = FitnessClassBooking("yoga", "Instructor", 5, 10.0)
+        self.assertEqual(b.max_spots, 5)
+
+    # ── C_init_min: max_spots < 1 ────────────────────────────────────
+
+    def test_cc_Cinit_min_true_zero_raises_value_error(self) -> None:
+        """C_init_min=True: max_spots=0 → C_init_isinstance_int=False (0 e int),
         0 < 1 = True → OR → ValueError."""
         with self.assertRaises(ValueError):
             FitnessClassBooking("yoga", "Instructor", 0, 10.0)
 
-    def test_cc_Cinit2_false_positive_evaluates_Cinit3(self) -> None:
-        """C_init_2=False: max_spots=5 → 5 < 1 = False → C_init_3 evaluată."""
+    def test_cc_Cinit_min_false_positive_evaluates_next(self) -> None:
+        """C_init_min=False: max_spots=5 → 5 < 1 = False → C_init_max evaluată."""
         b = FitnessClassBooking("yoga", "Instructor", 5, 10.0)
         self.assertEqual(b.max_spots, 5)
 
-    # ── C_init_3: max_spots > 30 ──────────────────────────────────────
+    # ── C_init_max: max_spots > 30 ───────────────────────────────────
 
-    def test_cc_Cinit3_true_over_limit_raises_value_error(self) -> None:
-        """C_init_3=True: max_spots=31 → C_init_1=False, C_init_2=False,
+    def test_cc_Cinit_max_true_over_limit_raises_value_error(self) -> None:
+        """C_init_max=True: max_spots=31 → C_init_isinstance_int=False, C_init_min=False,
         31 > 30 = True → OR → ValueError."""
         with self.assertRaises(ValueError):
             FitnessClassBooking("yoga", "Instructor", 31, 10.0)
 
-    def test_cc_Cinit3_false_all_conditions_false_valid(self) -> None:
-        """C_init_3=False: max_spots=30 → toate condițiile False → obiect creat.
+    def test_cc_Cinit_max_false_all_conditions_false_valid(self) -> None:
+        """C_init_max=False: max_spots=30 → toate condițiile False → obiect creat.
         Aceasta este singura combinație în care întreaga condiție compusă = False."""
         b = FitnessClassBooking("yoga", "Instructor", 30, 10.0)
         self.assertEqual(b.max_spots, 30)
 
-    # ── C1a: not client_name ──────────────────────────────────────────
+    # ── C1_isinstance: not isinstance(client_name, str) ─────────────
 
-    def test_cc_C1a_true_empty_string_raises(self) -> None:
-        """C1a=True: client_name='' → not '' = True → ValueError (short-circuit).
-        C1b nu este evaluată."""
+    def test_cc_C1_isinstance_true_non_string_raises(self) -> None:
+        """C1_isinstance=True: client_name=123 (int) → not isinstance(123, str) = True
+        → short-circuit OR → ValueError imediat, C1_empty și C1_whitespace nu sunt evaluate."""
         with self.assertRaises(ValueError):
-            self.b.book_spot("")
+            self.b.book_spot(123)
 
-    def test_cc_C1a_false_nonempty_evaluates_C1b(self) -> None:
-        """C1a=False: client_name='Alice' → not 'Alice' = False → C1b este evaluată."""
+    def test_cc_C1_isinstance_false_string_evaluates_C1_empty(self) -> None:
+        """C1_isinstance=False: client_name='Alice' → not isinstance('Alice', str) = False
+        → C1_empty este evaluată."""
         result = self.b.book_spot("Alice")
         self.assertEqual(result, "confirmed")
 
-    # ── C1b: not client_name.strip() ─────────────────────────────────
+    # ── C1_empty: not client_name ────────────────────────────────────
 
-    def test_cc_C1b_true_whitespace_only_raises(self) -> None:
-        """C1b=True: client_name='   ' → strip()='' → not '' = True → ValueError.
-        C1a=False (string nevid), deci C1b este evaluată."""
+    def test_cc_C1_empty_true_empty_string_raises(self) -> None:
+        """C1_empty=True: client_name='' → not '' = True → ValueError (short-circuit).
+        C1_whitespace nu este evaluată."""
+        with self.assertRaises(ValueError):
+            self.b.book_spot("")
+
+    def test_cc_C1_empty_false_nonempty_evaluates_C1_whitespace(self) -> None:
+        """C1_empty=False: client_name='Alice' → not 'Alice' = False → C1_whitespace este evaluată."""
+        result = self.b.book_spot("Alice")
+        self.assertEqual(result, "confirmed")
+
+    # ── C1_whitespace: not client_name.strip() ───────────────────────
+
+    def test_cc_C1_whitespace_true_spaces_only_raises(self) -> None:
+        """C1_whitespace=True: client_name='   ' → strip()='' → not '' = True → ValueError.
+        C1_empty=False (string nevid), deci C1_whitespace este evaluată."""
         with self.assertRaises(ValueError):
             self.b.book_spot("   ")
 
-    def test_cc_C1b_false_has_content_continues(self) -> None:
-        """C1b=False: client_name='Bob' → strip()='Bob' → not 'Bob' = False → continuă."""
+    def test_cc_C1_whitespace_false_has_content_continues(self) -> None:
+        """C1_whitespace=False: client_name='Bob' → strip()='Bob' → not 'Bob' = False → continuă."""
         result = self.b.book_spot("Bob")
         self.assertEqual(result, "confirmed")
 

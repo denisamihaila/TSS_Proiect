@@ -1,10 +1,8 @@
 """
-test_equivalence_partitioning.py – Partiționare în clase de echivalență.
+Partiționare în clase de echivalență.
 
 Strategie: Se împart input-urile fiecărei metode în grupe (clase) cu
 comportament identic și se testează câte un reprezentant din fiecare clasă.
-
-Proiect TSS – T1 | FitnessClassBooking
 """
 
 import unittest
@@ -14,8 +12,8 @@ from fitness_class_booking import FitnessClassBooking
 class TestEquivalencePartitioning(unittest.TestCase):
     """
     Partiționare în clase de echivalență pentru FitnessClassBooking.
-
     ═══════════════════════════════════════════════════════════════════
+    
     __init__(class_name, instructor, max_spots, price_per_session)
     ───────────────────────────────────────────────────────────────────
     EC01  class_name valid ("yoga")                     → obiect creat

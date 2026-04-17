@@ -1,11 +1,9 @@
 """
-test_independent_circuits.py – Basis Path Testing (McCabe).
+Basis Path Testing (McCabe).
 
 Strategie: Se calculează complexitatea ciclomatică V(G) pentru fiecare metodă,
 se construiește graful de flux de control (CFG) și se scrie câte un test
 pentru fiecare circuit independent (cale de bază).
-
-Proiect TSS – T1 | FitnessClassBooking
 """
 
 # =============================================================================
@@ -63,7 +61,7 @@ Proiect TSS – T1 | FitnessClassBooking
 # ─────────────────────────────────────────────────────────────────────────────
 #
 # Cod simplificat:
-#   (1) if not client_name or not client_name.strip():  raise ValueError
+#   (1) if not isinstance(client_name, str) or not client_name or not client_name.strip():  raise ValueError
 #   (2) client = client_name.strip()
 #   (3) if self.booked_spots < self.max_spots:
 #           return "confirmed"
@@ -261,7 +259,6 @@ class TestIndependentCircuitsCalculateCost(unittest.TestCase):
     """
 
     def setUp(self) -> None:
-        # price_per_session = 10.0 pentru calcule simple
         self.b = FitnessClassBooking("pilates", "Ion Pop", 10, 10.0)
 
     def test_cc_path1_invalid_sessions_raises_value_error(self) -> None:

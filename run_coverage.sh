@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# run_coverage.sh – Comenzi pentru rularea testelor și analiza de acoperire.
-# Rulează din WSL sau orice shell bash cu venv activat.
+# script pentru rulat toate testele + coverage + mutmut
+# se rulează din WSL cu venv-ul activat
 
 set -e  # oprește la prima eroare
 
@@ -8,12 +8,12 @@ echo "========================================="
 echo " TSS T1 – FitnessClassBooking Test Suite"
 echo "========================================="
 
-# 1. Instalare dependențe
+# Instalare dependențe
 echo ""
 echo "[1/5] Instalare dependențe..."
 pip install pytest coverage "mutmut<3" --quiet
 
-# 2. Rulare teste cu pytest (verbose)
+# Rulare teste cu pytest
 echo ""
 echo "[2/5] Rulare teste..."
 python -m pytest test_equivalence_partitioning.py \
@@ -33,16 +33,16 @@ python -m coverage run --branch -m pytest \
     test_independent_circuits.py \
     test_mutation.py
 
-# 4. Raport acoperire în terminal
+# Afișare rezultate în terminal
 echo ""
 echo "[4/5] Raport acoperire..."
 python -m coverage report -m --include="fitness_class_booking.py"
 
-# 5. Raport HTML (deschide htmlcov/index.html în browser)
+# Raport HTML
 python -m coverage html --include="fitness_class_booking.py"
 echo "Raport HTML generat în: htmlcov/index.html"
 
-# 6. Analiză mutanți (necesită WSL sau Linux)
+# Analiză mutanți (din WSL)
 echo ""
 echo "[5/5] Analiză mutanți (mutmut)..."
 python -m mutmut run --paths-to-mutate fitness_class_booking.py --tests-dir .
@@ -50,5 +50,5 @@ python -m mutmut results
 
 echo ""
 echo "========================================="
-echo " Gata! Verifică htmlcov/index.html"
+echo " Gata! Raportul se află în htmlcov/index.html"
 echo "========================================="
