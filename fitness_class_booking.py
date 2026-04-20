@@ -5,9 +5,9 @@ class FitnessClassBooking:
     Atribute:
         class_name          "dance", "pilates", "yoga" sau "zumba"
         instructor          Șir nevid
-        max_spots           Întreg 1–30
-        price_per_session   Float > 0
-        booked_spots        Locuri confirmate (pornește de la 0)
+        max_spots           nr intreg 1–30
+        price_per_session   float > 0
+        booked_spots        locuri confirmate (>=0)
         waitlist            Listă de așteptare (max 5 persoane)
         _confirmed          Listă internă a clienților confirmați
     """
@@ -62,7 +62,7 @@ class FitnessClassBooking:
 
     # ------------------------------------------------------------------
     def cancel_booking(self, client_name: str) -> bool:
-        """Anulează rezervarea clientului; promovează automat primul din waitlist.
+        """Anulează rezervarea clientului; promovează automat primul client din waitlist.
         Returnează True dacă rezervarea a fost găsită, False altfel."""
         name = client_name.strip() if client_name else ""
 

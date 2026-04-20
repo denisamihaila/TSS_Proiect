@@ -2,7 +2,7 @@
 test_mutation.py – Analiză mutanți generată cu mutmut 2.5.1.
 
 ═══════════════════════════════════════════════════════════════════════════════
-RAPORT REAL MUTMUT
+RAPORT MUTMUT
 ───────────────────────────────────────────────────────────────────────────────
 Comandă: mutmut run --paths-to-mutate fitness_class_booking.py
          --tests-dir . --runner "python -m pytest"

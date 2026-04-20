@@ -2,7 +2,7 @@
 
 **Materia:** Testarea Sistemelor Software (TSS)  
 **Tema:** T1 – Testare unitară în Python  
-**Framework:** `unittest` + `pytest` + `coverage` + `mutmut 2.5.1`  
+**Framework:** `unittest` + `pytest 9.0.2` + `coverage 7.13.5` + `mutmut 2.5.1`  
 **Python:** 3.10+
 
 ---
@@ -23,6 +23,74 @@ anulări cu promovare automată din waitlist.
 **Tipuri de clase valide:** `"dance"`, `"pilates"`, `"yoga"`, `"zumba"`  
 **Capacitate:** 1–30 locuri confirmate + max 5 pe waitlist  
 **Validări `max_spots`:** trebuie să fie `int` pur (nu `float`, nu `bool`); `True` și `False` sunt respinse explicit prin verificarea `isinstance(max_spots, bool)`
+
+### Fragmente de cod relevante
+
+#### 1) Validarea din `__init__`
+
+```python
+if class_name not in self.VALID_CLASSES:
+    raise ValueError(...)
+if not isinstance(instructor, str) or not instructor or not instructor.strip():
+    raise ValueError(...)
+if isinstance(max_spots, bool) or not isinstance(max_spots, int) or max_spots < 1 or max_spots > 30:
+    raise ValueError(...)
+if not isinstance(price_per_session, (int, float)) or price_per_session <= 0:
+    raise ValueError(...)
+```
+
+Acesta este cel mai important bloc de validare: de aici vin mai multe clase de
+echivalență, valorile de frontieră și cele 4 decizii din CFG-ul pentru
+`__init__`. Verificarea `isinstance(max_spots, bool)` există ca să respingă
+explicit `True` și `False`, chiar dacă `bool` este subclasă de `int`.
+
+#### 2) Fluxul de rezervare din `book_spot`
+
+```python
+if self.booked_spots < self.max_spots:
+    self._confirmed.append(client)
+    self.booked_spots += 1
+    return "confirmed"
+elif len(self.waitlist) < self.MAX_WAITLIST_SIZE:
+    self.waitlist.append(client)
+    return "waitlist"
+else:
+    return "rejected"
+```
+
+Acest fragment arată clar cele 3 rezultate posibile: loc confirmat, mutare pe
+waitlist sau refuz. E foarte util de pus în raport fiindcă se vede imediat
+tranziția între ramuri și limita de 5 persoane din waitlist.
+
+#### 3) Calculul costului în `calculate_cost`
+
+```python
+cost = sessions * self.price_per_session
+
+discount = 0.0
+if has_membership:
+    discount += 0.20
+if sessions >= 10:
+    discount += 0.10
+
+return round(cost * (1 - discount), 2)
+```
+
+Aici se vede logica de business: reducerile sunt aditive, nu se aplică pe rând
+una peste alta, iar rezultatul este rotunjit la două zecimale. Acesta este
+exact locul vizat și de testele de mutation testing.
+
+#### 4) Un test relevant de boundary value analysis
+
+```python
+def test_init_price_just_above_zero_is_valid(self) -> None:
+    b = FitnessClassBooking("yoga", "Instructor", 5, 0.01)
+    self.assertAlmostEqual(b.price_per_session, 0.01)
+```
+
+Acest test arată cum verifici frontiera pentru `price_per_session > 0`: `0.0`
+trebuie respins, iar `0.01` trebuie acceptat. Este și testul care omoară
+mutantul `M22`.
 
 ---
 
@@ -243,28 +311,60 @@ ValueError          │
 
 ---
 
+### Diagrame CFG (PNG)
+
+Imaginile de mai jos sunt exporturi din Draw.io / diagrams.net [4] și reprezintă
+varianta grafică finală a CFG-urilor.
+
+#### `__init__`
+<p align="center">
+  <img src="init_cfg.drawio.png" alt="CFG __init__" width="920">
+</p>
+
+#### `book_spot`
+<p align="center">
+  <img src="book_spot_cfg.drawio.png" alt="CFG book_spot" width="920">
+</p>
+
+#### `cancel_booking`
+<p align="center">
+  <img src="cancel_booking_cfg.drawio.png" alt="CFG cancel_booking" width="920">
+</p>
+
+#### `calculate_cost`
+<p align="center">
+  <img src="calculate_cost_cfg.drawio.png" alt="CFG calculate_cost" width="920">
+</p>
+
+---
+
 ## 6. Raport mutmut – analiză reală
 
 **Comandă:** `mutmut run --paths-to-mutate fitness_class_booking.py --tests-dir . --runner "python -m pytest"`  
-**Mediu:** WSL Ubuntu 24.04 / Python 3.12.3 / mutmut 2.5.1
+**Mediu:** WSL Ubuntu 24.04.1 LTS / Python 3.12.3 / mutmut 2.5.1
 
 | Categorie | Număr |
 |-----------|-------|
-| Total mutanți generați | 80 |
-| 🎉 Uciși | 53 |
-| 🤔 Suspicioși | 16 |
-| 🙁 Supraviețuitori | 11 |
-| Scor inițial | 53/80 ≈ 66.3% |
+| Total mutanți generați | 86 |
+| Uciși | 65 |
+| Suspicioși | 13 |
+| Supraviețuitori | 8 |
+| Scor inițial | 65/86 ≈ 75.6% |
 
-### Clasificarea mutanților supraviețuitori (11)
+### Rezumat mutmut
+
+`mutmut results` raportează acum:
+
+- `Suspicious (13)`: `M3, M5, M8, M10-M12, M15, M22, M29, M34-M36, M74`
+- `Survived (8)`: `M9, M14, M21, M26, M39, M49, M70, M75`
+
+### Clasificarea mutanților supraviețuitori (8)
 
 | Grup | Mutanți | Tip | Acțiune |
 |------|---------|-----|---------|
-| String mutations | M9, M13, M20, M23, M35, M65 | Necritici – mesajul ValueError se schimbă, eroarea tot se aruncă | Documentați, nu omorâți |
-| Quasi-echivalent | M45 (`else ""` → `else "XXXX"`) | Observable doar cu client `"XXXX"` + `cancel(None)` simultan | Documentat |
-| **Comportamental neechivalent** | **M12** | `or` → `and` în validarea instructor: whitespace-only trece | **Ucis** de `test_kill_M12_*` |
-| **Comportamental neechivalent** | **M22** | `<= 0` → `<= 1` în validarea price: prețuri din (0,1] respinse eronat | **Ucis** de BVA `price=0.01` |
-| **Comportamental neechivalent** | **M76** | `round(cost, 2)` → `round(cost, 3)`: precizie greșită | **Ucis** de `test_kill_M76_*` |
+| Mutanți de text / mesaj | M9, M14, M21, M39, M70 | Modifică doar mesajele `ValueError` sau textul explicativ | Documentați, nu omorâți |
+| Quasi-echivalent | M26, M49 | Diferență observabilă doar pe inputuri foarte specifice | Documentat |
+| Echivalent algebric | M75 | `discount += 0.20` vs `discount = 0.20` în contextul actual | Documentat |
 
 **Scor final (mutanți comportamentali neechivalenți): 3/3 = 100%**
 
@@ -278,11 +378,44 @@ ValueError          │
 
 ---
 
-## 7. Cum se rulează
+## 7. Configurație hardware și software
 
-### Teste (Windows – pytest)
+### Laptopuri folosite
 
-```powershell
+| Model | Procesor | Memorie | Stocare |
+|-------|----------|---------|---------|
+| HP Victus 16 | Intel Core i7-12700H | 16 GB RAM DDR5 4800 MHz (SK hynix) | 512 GB SSD (Samsung) |
+| HP Laptop 15 | Intel Core i7-1165G7 | 16 GB RAM DDR4 2933 MHz | 512 GB SSD (Micron OEM) |
+
+### OS și mediu de lucru
+
+| Componentă | Versiune / detalii |
+|-----------|--------------------|
+| Windows | Windows 11 25H2, build 26200.8246 |
+| WSL | 2.6.3.0 |
+| Kernel WSL | 6.6.87.2-microsoft-standard-WSL2 |
+| Distro Linux | Ubuntu 24.04.1 LTS (Noble Numbat) |
+| VS Code | 1.116.0 |
+| Python în WSL | 3.12.3 |
+| pip în WSL | 24.0 |
+| pytest în WSL | 9.0.2 |
+| coverage.py în WSL | 7.13.5 |
+| mutmut în WSL | 2.5.1 |
+
+Versiunile de mai sus au fost preluate local din PowerShell și din venv-ul WSL
+`/home/alex/tss_venv`.
+
+Nu a fost folosită o mașină virtuală clasică; mediul Linux a fost accesat prin
+WSL2.
+
+## 8. Cum se rulează
+
+Comenzile de mai jos urmează documentația oficială pentru pytest [1],
+coverage.py [2] și mutmut [3].
+
+### Teste (Windows / WSL / Linux - pytest)
+
+```bash
 # Instalare dependențe
 pip install pytest coverage
 
@@ -305,8 +438,8 @@ pip install --break-system-packages --ignore-installed "mutmut<3"
 # Creare symlink python dacă lipsește
 ln -sf /usr/bin/python3 /usr/local/bin/python
 
-# Navigare la proiect (path Windows montat în WSL)
-cd /mnt/d/Licenta/TSS_Proiect
+# Navigare la proiect
+cd <path_catre_TSS_Proiect>  # ex: /mnt/c/Users/alexn/Documents/GitHub/TSS_Proiect
 
 # Rulare analiză mutanți
 mutmut run --paths-to-mutate fitness_class_booking.py \
@@ -318,9 +451,88 @@ mutmut results
 mutmut show <ID>
 ```
 
+### Capturi recomandate
+
+1. Teste unitare
+
+```bash
+python -m pytest test_*.py -v
+```
+
+2. Coverage in consola
+
+```bash
+python -m coverage run --branch -m pytest test_*.py
+python -m coverage report -m --include="fitness_class_booking.py"
+```
+
+3. Coverage HTML
+
+```bash
+python -m coverage html --include="fitness_class_booking.py"
+```
+
+4. Mutation testing
+
+```bash
+mutmut run --paths-to-mutate fitness_class_booking.py --tests-dir . --runner "python -m pytest"
+mutmut results
+mutmut show <ID>
+```
+
+### Capturi de ecran
+
+Mai jos sunt capturile reale, in ordinea comenzilor rulate.
+
+**1-2. `python -m pytest test_*.py -v`**
+
+<p align="center">
+  <img src="screenshots/01_pytest_verbose_part1.png" alt="pytest verbose part 1" width="1000">
+</p>
+
+<p align="center">
+  <img src="screenshots/02_pytest_verbose_part2.png" alt="pytest verbose part 2" width="1000">
+</p>
+
+**3. `python -m coverage run --branch -m pytest test_*.py`**
+
+<p align="center">
+  <img src="screenshots/03_coverage_run_branch.png" alt="coverage run branch" width="1000">
+</p>
+
+**4. `python -m coverage report -m --include="fitness_class_booking.py"`**
+
+<p align="center">
+  <img src="screenshots/04_coverage_report_fitness_class_booking.png" alt="coverage report" width="1000">
+</p>
+
+**5. `mutmut run --paths-to-mutate fitness_class_booking.py --tests-dir . --runner "python -m pytest"` + `mutmut results`**
+
+<p align="center">
+  <img src="screenshots/05_mutmut_run_and_results.png" alt="mutmut run and results" width="1000">
+</p>
+
+**6. Mutanți supraviețuitori, partea 1**
+
+<p align="center">
+  <img src="screenshots/06_mutmut_survivors_part1.png" alt="mutmut survivors part 1" width="1000">
+</p>
+
+**7. Mutanți supraviețuitori, partea 2**
+
+<p align="center">
+  <img src="screenshots/07_mutmut_survivors_part2.png" alt="mutmut survivors part 2" width="1000">
+</p>
+
+**8. Rulare fragment Python din WSL**
+
+<p align="center">
+  <img src="screenshots/08_wsl_python_snippet_output.png" alt="wsl python snippet output" width="1000">
+</p>
+
 ---
 
-## 8. Structura proiectului
+## 9. Structura proiectului
 
 ```
 TSS_Proiect/
@@ -337,5 +549,24 @@ TSS_Proiect/
 **Total teste: 127 | Toate trec (0 eșuate)**
 
 ---
+
+## 10. Anexe - documentație oficială
+
+### Linkuri oficiale
+
+- [pytest - official documentation](https://docs.pytest.org/)
+- [coverage.py - official documentation](https://coverage.readthedocs.io/)
+- [mutmut - official documentation](https://mutmut.readthedocs.io/en/)
+- [draw.io / diagrams.net - official website](https://www.diagrams.net/)
+- [unittest - Python standard library documentation](https://docs.python.org/3/library/unittest.html)
+- [VS Code - documentation](https://code.visualstudio.com/docs)
+- [Windows Subsystem for Linux - documentation](https://learn.microsoft.com/windows/wsl/)
+
+### Referințe
+
+[1]: https://docs.pytest.org/
+[2]: https://coverage.readthedocs.io/
+[3]: https://mutmut.readthedocs.io/en/
+[4]: https://www.diagrams.net/
 
 *Proiect universitar TSS – T1 Testare unitară Python | `unittest` + `pytest` + `coverage` + `mutmut`*
