@@ -131,7 +131,7 @@ Acest bloc gestionează anularea unei rezervări.
 - Dacă clientul nu este găsit:
   - nu se modifică nicio listă
   - metoda returnează False
-  
+
 Pentru testare, fragmentul este important deoarece acoperă cele 3 situații principale: anulare din lista de confirmați, anulare din waitlist și client inexistent.
 
 #### 4) Calculul costului în `calculate_cost`
@@ -163,7 +163,6 @@ Acest bloc calculează costul final pentru un număr de ședințe.
 - La final, costul este rotunjit la două zecimale cu `round(..., 2)`.
 
 Pentru testare, fragmentul este important deoarece verifică toate combinațiile de reduceri și rotunjirea rezultatului final.
-
 
 ---
 
@@ -268,6 +267,14 @@ ValueError           or not instructor or not instructor.strip()
 
 **V(G) = 4 + 1 = 5** | Circuite: PATH_INIT_1..5
 
+| Circuit | Cale | Condiții | Rezultat |
+|---------|------|----------|---------|
+| PATH_INIT_1 | N1→N2(T)→N3→Nexit | D1=T (`class_name="crossfit"`) | ValueError |
+| PATH_INIT_2 | N1→N2(F)→N4(T)→N5→Nexit | D1=F, D2=T (`instructor=""`) | ValueError |
+| PATH_INIT_3 | N1→N2(F)→N4(F)→N6(T)→N7→Nexit | D1=F, D2=F, D3=T (`max_spots=0`) | ValueError |
+| PATH_INIT_4 | N1→N2(F)→N4(F)→N6(F)→N8(T)→N9→Nexit | D1=F, D2=F, D3=F, D4=T (`price=0.0`) | ValueError |
+| PATH_INIT_5 | N1→N2(F)→N4(F)→N6(F)→N8(F)→N10→Nexit | D1=F, D2=F, D3=F, D4=F | obiect creat |
+
 ### `book_spot` – V(G) = 4
 
 ```
@@ -287,6 +294,13 @@ N1 → N2: if not isinstance(client_name, str) or not client_name or not client_
 
 **V(G) = 3 + 1 = 4** | Circuite: PATH_BS_1..4
 
+| Circuit | Cale | Condiții | Rezultat |
+|---------|------|----------|---------|
+| PATH_BS_1 | N1→N2(T)→N3→Nexit | D1=T (`client_name=""`) | ValueError |
+| PATH_BS_2 | N1→N2(F)→N4→N5(T)→N6→Nexit | D1=F, D2=T (loc liber) | `"confirmed"` |
+| PATH_BS_3 | N1→N2(F)→N4→N5(F)→N7(T)→N8→Nexit | D1=F, D2=F, D3=T (waitlist disponibil) | `"waitlist"` |
+| PATH_BS_4 | N1→N2(F)→N4→N5(F)→N7(F)→N9→Nexit | D1=F, D2=F, D3=F (waitlist plin) | `"rejected"` |
+
 ### `cancel_booking` – V(G) = 4
 
 ```
@@ -305,6 +319,13 @@ N1: name = strip(client_name)  →  N2: if name in _confirmed
 ```
 
 **V(G) = 3 + 1 = 4** | Circuite: PATH_CB_1..4
+
+| Circuit | Cale | Condiții | Rezultat |
+|---------|------|----------|---------|
+| PATH_CB_1 | N1→N2(T)→N3→N4(F)→return True→Nexit | D4=T, D5=F (client confirmat, waitlist gol) | `True` |
+| PATH_CB_2 | N1→N2(T)→N3→N4(T)→N5→return True→Nexit | D4=T, D5=T (client confirmat, waitlist non-gol) | `True` + promovare |
+| PATH_CB_3 | N1→N2(F)→N6(T)→N7→Nexit | D4=F, D6=T (client în waitlist) | `True` |
+| PATH_CB_4 | N1→N2(F)→N6(F)→N8→Nexit | D4=F, D6=F (client negăsit) | `False` |
 
 ### `calculate_cost` – V(G) = 4
 
