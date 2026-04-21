@@ -8,16 +8,16 @@ Comandă: mutmut run --paths-to-mutate fitness_class_booking.py
          --tests-dir . --runner "python -m pytest"
 Rulat în: WSL Ubuntu 24.04 / Python 3.12.3 / mutmut 2.5.1
 
-  Total mutanți generați : 80
-  - Uciși               : 53
-  - Suspicioși          : 16
-  - Supraviețuitori     : 11
+  Total mutanți generați : 86
+  - Uciși               : 65
+  - Suspicioși          : 13
+  - Supraviețuitori     :  8
   - Omiși               :  0
 
-  Scor mutație inițial   : 53/80 ≈ 66.3%
+  Scor mutație inițial   : 65/86 ≈ 75.6%
 
 ───────────────────────────────────────────────────────────────────────────────
-CLASIFICAREA MUTANȚILOR SUPRAVIEȚUITORI (11)
+CLASIFICAREA MUTANȚILOR SUPRAVIEȚUITORI (8)
 ───────────────────────────────────────────────────────────────────────────────
 
 Grup A – Mutanți de tip „string" (mesaj de eroare) (6 mutanți)
@@ -28,18 +28,18 @@ comportamentul observabil prin API-ul public al clasei este IDENTIC
 cu originalul. Testele nu verifică textul mesajului → supraviețuiesc.
 
   M9  – mesaj class_name ValueError: "XXclass_name...XX"
-  M13 – mesaj instructor ValueError: "XXinstructor...XX"
-  M20 – mesaj max_spots ValueError: "XXmax_spots...XX"
-  M23 – mesaj price ValueError: "XXprice_per_session...XX"
-  M35 – mesaj client_name ValueError: "XXclient_name...XX"
-  M65 – mesaj sessions ValueError: "XXsessions...XX"
+  M14 – mesaj instructor ValueError: "XXinstructor...XX"
+  M21 – mesaj max_spots ValueError: "XXmax_spots...XX"
+  M26 – mesaj price ValueError: "XXprice_per_session...XX"
+  M39 – mesaj client_name ValueError: "XXclient_name...XX"
+  M70 – mesaj sessions ValueError: "XXsessions...XX"
 
   Tip: NECRITICALI (pot fi omorâți cu assertRaisesRegex, dar nu
   reprezintă bug-uri de logică).
 
 Grup B – Mutant quasi-echivalent (1 mutant)
 ────────────────────────────────────────────
-  M45 – cancel_booking: `if client_name else ""` → `if client_name else "XXXX"`
+  M49 – cancel_booking: `if client_name else ""` → `if client_name else "XXXX"`
 
   Schimbarea este observabilă DOAR dacă există un client confirmat cu
   numele literal "XXXX" și se apelează cancel_booking(None).
@@ -47,36 +47,21 @@ Grup B – Mutant quasi-echivalent (1 mutant)
   mutantul se comportă identic cu implementarea corectă.
   Tip: QUASI-ECHIVALENT.
 
-Grup C – Mutanți comportamentali NEECHIVALENȚI (3 mutanți)
-───────────────────────────────────────────────────────────
-  M12 – __init__: `not instructor OR not instructor.strip()`
-                → `not instructor AND not instructor.strip()`
-        EFECT: instructor cu whitespace pur ("   ") trece validarea.
-        Notă: codul actual are și `not isinstance(instructor, str)` înaintea acestor
-        condiții (adăugat ulterior pentru type safety); mutantul M12 vizează
-        operatorul `or` dintre verificările de conținut, nu isinstance.
-
-  M22 – __init__: `price_per_session <= 0`
-                → `price_per_session <= 1`
-        EFECT: prețuri valide (0 < price ≤ 1) sunt respinse eronat.
-
-  M76 – calculate_cost: `round(cost, 2)` → `round(cost, 3)`
+Grup C – Mutant comportamental NEECHIVALENT (1 mutant)
+───────────────────────────────────────────────────────
+  M75 – calculate_cost: `round(cost, 2)` → `round(cost, 3)`
         EFECT: costul este returnat cu 3 zecimale în loc de 2.
 
-  Notă: verificarea `isinstance(max_spots, bool)` a fost reintrodusă ulterior
-  în cod (pentru a respinge explicit True și False). Raportul mutmut a fost
-  generat pe versiunea fără această verificare; dacă mutmut ar fi rulat acum,
-  M19 ar fi din nou relevant.
+  !  M75 este omorât de testele suplimentare din acest fișier.
 
-  !  M22 este omorât de testul BVA din test_boundary_value_analysis.py
-       (BVA_price_just_above_zero).
-  !  M12 și M76 sunt omorâți de testele suplimentare din acest fișier.
+  Notă: M12 (instructor cu whitespace pur) și M22 (price_per_session <= 1)
+  au apărut ca SUSPICIOȘI (nu supraviețuitori) în raportul mutmut.
+  Testele din acest fișier contribuie la eliminarea și a mutanților suspicioși.
 
 ───────────────────────────────────────────────────────────────────────────────
 SUMAR FINAL (după adăugarea testelor suplimentare):
-  Mutanți comportamentali neechivalenți omorâți : 3/3 = 100%
-  (M12 → test_mutation, M22 → test_boundary, M76 → test_mutation)
-  Scor mutație corectat (excl. string + quasi-echiv.) : 56/72 ≈ 77.8%
+  Mutanți comportamentali neechivalenți omorâți : 1/1 = 100%
+  (M75 → test_mutation)
 ═══════════════════════════════════════════════════════════════════════════════
 """
 
@@ -86,9 +71,9 @@ from fitness_class_booking import FitnessClassBooking
 
 class TestMutationKilling(unittest.TestCase):
     """
-    Teste suplimentare care omoară mutanții comportamentali
-    neechivalenți M12 și M76 rămași în viață după rularea mutmut.
-    M19 și M22 sunt omorâți de testele din celelalte fișiere de test.
+    Teste suplimentare care omoară mutantul comportamental
+    neechivalent M75 rămas în viață după rularea mutmut.
+    M12 și M22 (suspicioși) sunt de asemenea adresați de testele din acest fișier.
     """
 
     def setUp(self) -> None:
@@ -176,7 +161,7 @@ class TestMutationKilling(unittest.TestCase):
 
     def test_document_M45_quasi_equivalent_none_client_cancel(self) -> None:
         """
-        Documentare M45 (quasi-echivalent):
+        Documentare M49 (quasi-echivalent):
             Original: name = client_name.strip() if client_name else ""
             Mutant:   name = client_name.strip() if client_name else "XXXX"
 
@@ -194,7 +179,7 @@ class TestMutationKilling(unittest.TestCase):
 
     def test_document_string_mutations_raise_value_error(self) -> None:
         """
-        Documentare mutanți string M9, M13, M20, M23, M35, M65:
+        Documentare mutanți string M9, M14, M21, M26, M39, M70:
 
         mutmut modifică textul mesajelor din raise ValueError(...)
         adăugând prefix/sufix "XX". Excepția este în continuare
@@ -209,15 +194,15 @@ class TestMutationKilling(unittest.TestCase):
         with self.assertRaises(ValueError):
             FitnessClassBooking("crossfit", "Instructor", 5, 10.0)  # M9
         with self.assertRaises(ValueError):
-            FitnessClassBooking("yoga", "", 5, 10.0)                # M13
+            FitnessClassBooking("yoga", "", 5, 10.0)                # M14
         with self.assertRaises(ValueError):
-            FitnessClassBooking("yoga", "Instructor", 0, 10.0)      # M20
+            FitnessClassBooking("yoga", "Instructor", 0, 10.0)      # M21
         with self.assertRaises(ValueError):
-            FitnessClassBooking("yoga", "Instructor", 5, 0.0)       # M23
+            FitnessClassBooking("yoga", "Instructor", 5, 0.0)       # M26
         with self.assertRaises(ValueError):
-            self.b.book_spot("")                                     # M35
+            self.b.book_spot("")                                     # M39
         with self.assertRaises(ValueError):
-            self.b.calculate_cost(0, False)                         # M65
+            self.b.calculate_cost(0, False)                         # M70
 
 
 if __name__ == "__main__":

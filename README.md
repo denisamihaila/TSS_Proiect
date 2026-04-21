@@ -372,7 +372,43 @@ ValueError          │
 
 ---
 
-## 5. Acoperire la nivel de condiție (condition coverage)
+## 5. Acoperire la nivel de instrucțiune și decizie
+
+### Acoperire la nivel de instrucțiune (Statement Coverage)
+
+Acoperirea la nivel de instrucțiune impune ca fiecare **instrucțiune executabilă** din cod să fie executată cel puțin o dată în timpul rulării testelor. Testele corespunzătoare se află în clasa `TestStatementCoverage` din `test_coverage.py`.
+
+| Metodă | Instrucțiuni acoperite |
+|--------|------------------------|
+| `__init__` | Calea validă (toate assignment-urile) + câte un test pentru fiecare dintre cele 4 ramuri de eroare (`ValueError`) |
+| `book_spot` | `ValueError` (client invalid) + `"confirmed"` (loc liber) + `"waitlist"` (sală plină) + `"rejected"` (waitlist plin) |
+| `cancel_booking` | `True` fără promovare + `True` cu promovare din waitlist + `False` (client negăsit) |
+| `calculate_cost` | `ValueError` (sessions invalid) + cost fără discount + discount membership + discount volum |
+
+**Rezultat: 100% statement coverage** — 55 instrucțiuni / 0 neacoperite.
+
+---
+
+### Acoperire la nivel de decizie (Decision Coverage)
+
+Acoperirea la nivel de decizie impune ca fiecare **ramură** a unei decizii (`if`, `elif`, `else`) să fie evaluată cel puțin o dată ca `True` și cel puțin o dată ca `False`. Testele corespunzătoare se află în clasa `TestDecisionCoverage` din `test_coverage.py`.
+
+| ID | Decizie | Metodă | True | False |
+|----|---------|--------|------|-------|
+| D1 | `not isinstance(client_name, str) or not client_name or not client_name.strip()` | `book_spot` | `client_name=123` → ValueError | `"Alice"` → continuă |
+| D2 | `self.booked_spots < self.max_spots` | `book_spot` | 0 din 5 ocupate → `"confirmed"` | 5 din 5 → trece la D3 |
+| D3 | `len(self.waitlist) < MAX_WAITLIST_SIZE` | `book_spot` | 0 pe WL → `"waitlist"` | 5 pe WL → `"rejected"` |
+| D4 | `name in self._confirmed` | `cancel_booking` | client confirmat → True | client absent → trece la D6 |
+| D5 | `if self.waitlist` | `cancel_booking` | waitlist non-gol → promovare | waitlist gol → fără promovare |
+| D6 | `name in self.waitlist` | `cancel_booking` | client pe WL → True | absent din ambele → False |
+| D7 | `has_membership` | `calculate_cost` | True → discount 20% | False → fără discount MB |
+| D8 | `sessions >= 10` | `calculate_cost` | 10 ședințe → discount 10% | 9 ședințe → fără discount volum |
+
+**Rezultat: 100% decision coverage** — toate cele 8 decizii testate pe ambele ramuri.
+
+---
+
+## 6. Acoperire la nivel de condiție (condition coverage)
 
 Acoperirea la nivel de condiție impune ca fiecare **condiție atomică** dintr-o decizie compusă să fie evaluată cel puțin o dată ca `True` și cel puțin o dată ca `False`, independent de celelalte condiții. În cazul operatorului `OR` cu evaluare în scurtcircuit, o condiție atomică este evaluată doar dacă toate condițiile precedente sunt `False`.
 
@@ -446,41 +482,38 @@ Cele două condiții independente (`has_membership` și `sessions >= 10`) sunt t
 
 ---
 
-## 6. Raport mutmut – analiză reală
+## 7. Raport mutmut – analiză reală
 
 **Comandă:** `mutmut run --paths-to-mutate fitness_class_booking.py --tests-dir . --runner "python -m pytest"`  
 **Mediu:** WSL Ubuntu 24.04.1 LTS / Python 3.12.3 / mutmut 2.5.1
 
 | Categorie | Număr |
 |-----------|-------|
-| Total mutanți generați | 80 |
-| Uciși | 53 |
-| Suspicioși | 16 |
-| Supraviețuitori | 11 |
-| Scor inițial | 53/80 ≈ 66.3% |
+| Total mutanți generați | 86 |
+| Uciși | 65 |
+| Suspicioși | 13 |
+| Supraviețuitori | 8 |
+| Scor inițial | 65/86 ≈ 75.6% |
 
-### Clasificarea mutanților supraviețuitori (11)
+### Clasificarea mutanților supraviețuitori (8)
 
 | Grup | Mutanți | Tip | Acțiune |
 |------|---------|-----|---------|
-| Grup A – Mutanți de text / mesaj | M9, M13, M20, M23, M35, M65 | Modifică doar mesajele `ValueError` adăugând prefix/sufix `"XX"` — excepția este în continuare aruncată | Documentați, nu omorâți |
-| Grup B – Quasi-echivalent | M45 | `cancel_booking`: diferență observabilă doar dacă există un client cu numele exact `"XXXX"` și se apelează `cancel_booking(None)` | Documentat |
-| Grup C – Comportamentali neechivalenți | M12, M22, M76 | Modifică logica de business; produc bug-uri reale | Omorâți prin teste suplimentare |
+| Grup A – Mutanți de text / mesaj | M9, M14, M21, M26, M39, M70 | Modifică doar mesajele `ValueError` adăugând prefix/sufix `"XX"` — excepția este în continuare aruncată | Documentați, nu omorâți |
+| Grup B – Quasi-echivalent | M49 | `cancel_booking`: diferență observabilă doar dacă există un client cu numele exact `"XXXX"` și se apelează `cancel_booking(None)` | Documentat |
+| Grup C – Comportamental neechivalent | M75 | Modifică logica de business; produce bug real | Omorât prin teste suplimentare |
 
-**Scor final (mutanți comportamentali neechivalenți): 3/3 = 100%**  
-**Scor corectat (excl. string + quasi-echiv.): 56/72 ≈ 77.8%**
+**Scor final (mutanți comportamentali neechivalenți): 1/1 = 100%**
 
 ### Tabel detaliat mutanți comportamentali
 
 | Mutant | Original | Modificare mutmut | Efect bug | Test care îl omoară |
 |--------|----------|--------------------|-----------|---------------------|
-| M12 | `not instructor or not instructor.strip()` | `or` → `and` | Instructor `"   "` trece validarea | `test_kill_M12_whitespace_only_instructor_must_raise_value_error` |
-| M22 | `price_per_session <= 0` | `<= 0` → `<= 1` | Prețuri valide în `(0, 1]` aruncă ValueError | `test_init_price_just_above_zero_is_valid` (BVA) |
-| M76 | `round(cost, 2)` | `2` → `3` | Costul returnat cu 3 zecimale în loc de 2 | `test_kill_M76_cost_rounds_to_two_decimal_places` |
+| M75 | `round(cost, 2)` | `2` → `3` | Costul returnat cu 3 zecimale în loc de 2 | `test_kill_M76_cost_rounds_to_two_decimal_places` |
 
 ---
 
-## 7. Configurație hardware și software
+## 8. Configurație hardware și software
 
 ### Laptopuri folosite
 
@@ -510,7 +543,7 @@ Versiunile de mai sus au fost preluate local din PowerShell și din venv-ul WSL
 Nu a fost folosită o mașină virtuală clasică; mediul Linux a fost accesat prin
 WSL2.
 
-## 8. Cum se rulează
+## 9. Cum se rulează
 
 Comenzile de mai jos urmează documentația oficială pentru pytest [1],
 coverage.py [2] și mutmut [3].
@@ -625,7 +658,7 @@ Mai jos sunt capturile reale, in ordinea comenzilor rulate.
 
 ---
 
-## 9. Structura proiectului
+## 10. Structura proiectului
 
 ```
 TSS_Proiect/
@@ -662,9 +695,9 @@ TSS_Proiect/
 
 ---
 
-## 10. Anexe - documentație oficială
+## 11. Referințe & Documentații
 
-### Linkuri oficiale
+### Linkuri
 
 - [pytest - official documentation][1]
 - [coverage.py - official documentation][2]
