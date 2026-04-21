@@ -391,7 +391,11 @@ Acoperirea la nivel de instrucțiune impune ca fiecare **instrucțiune executabi
 
 ### Acoperire la nivel de decizie (Decision Coverage)
 
-Acoperirea la nivel de decizie impune ca fiecare **ramură** a unei decizii (`if`, `elif`, `else`) să fie evaluată cel puțin o dată ca `True` și cel puțin o dată ca `False`. Testele corespunzătoare se află în clasa `TestDecisionCoverage` din `test_coverage.py`.
+Acoperirea la nivel de decizie impune ca fiecare **ramură** a unei decizii (`if`, `elif`, `else`) să fie evaluată cel puțin o dată ca `True` și cel puțin o dată ca `False`.
+
+În acest tabel sunt urmărite deciziile operaționale principale din `book_spot`, `cancel_booking` și logica de reduceri din `calculate_cost`. Deciziile de validare din `__init__` și garda de validare pentru `sessions` sunt tratate separat în clasele de echivalență, valorile de frontieră, CFG și condition coverage.
+
+Testele corespunzătoare se află în clasa `TestDecisionCoverage` din `test_coverage.py`.
 
 | ID | Decizie | Metodă | True | False |
 |----|---------|--------|------|-------|
@@ -404,7 +408,7 @@ Acoperirea la nivel de decizie impune ca fiecare **ramură** a unei decizii (`if
 | D7 | `has_membership` | `calculate_cost` | True → discount 20% | False → fără discount MB |
 | D8 | `sessions >= 10` | `calculate_cost` | 10 ședințe → discount 10% | 9 ședințe → fără discount volum |
 
-**Rezultat: 100% decision coverage** — toate cele 8 decizii testate pe ambele ramuri.
+**Rezultat: 100% decision coverage pentru setul analizat** — cele 8 decizii operaționale din tabel sunt testate pe ambele ramuri.
 
 ---
 
@@ -412,7 +416,7 @@ Acoperirea la nivel de decizie impune ca fiecare **ramură** a unei decizii (`if
 
 Acoperirea la nivel de condiție impune ca fiecare **condiție atomică** dintr-o decizie compusă să fie evaluată cel puțin o dată ca `True` și cel puțin o dată ca `False`, independent de celelalte condiții. În cazul operatorului `OR` cu evaluare în scurtcircuit, o condiție atomică este evaluată doar dacă toate condițiile precedente sunt `False`.
 
-Testele corespunzătoare se află în clasa `TestConditionCoverage` din `test_coverage.py`.
+Tabelele de mai jos documentează condițiile compuse importante din cod. Cazurile pentru `max_spots`, `client_name` și combinațiile de reduceri din `calculate_cost` sunt acoperite explicit în clasa `TestConditionCoverage` din `test_coverage.py`, iar condiția pentru `instructor` este documentată aici deoarece are aceeași structură de validare ca `client_name` și este acoperită prin testele de echivalență/mutation.
 
 ### Condiție compusă `__init__` – instructor
 
@@ -421,7 +425,7 @@ Testele corespunzătoare se află în clasa `TestConditionCoverage` din `test_co
 | ID condiție | Condiție atomică | True | False |
 |-------------|------------------|------|-------|
 | C_instr_isinstance | `not isinstance(instructor, str)` | `123` (int) → ValueError | `"Ana Pop"` → continuă |
-| C_instr_empty | `not instructor` | `""` → ValueError (short-circuit) | `"Ana Pop"` → continuă |
+| C_instr_empty | `not instructor` | `""` → ValueError (scurt-circuit) | `"Ana Pop"` → continuă |
 | C_instr_strip | `not instructor.strip()` | `"   "` → ValueError | `"Ana Pop"` → valid |
 
 ### Condiție compusă `__init__` – max_spots
@@ -509,7 +513,7 @@ Cele două condiții independente (`has_membership` și `sessions >= 10`) sunt t
 
 | Mutant | Original | Modificare mutmut | Efect bug | Test care îl omoară |
 |--------|----------|--------------------|-----------|---------------------|
-| M75 | `round(cost, 2)` | `2` → `3` | Costul returnat cu 3 zecimale în loc de 2 | `test_kill_M76_cost_rounds_to_two_decimal_places` |
+| M75 | `round(cost, 2)` | `2` → `3` | Costul returnat cu 3 zecimale în loc de 2 | `test_kill_M75_cost_rounds_to_two_decimal_places` |
 
 ---
 
@@ -678,8 +682,7 @@ TSS_Proiect/
 ├── calculate_cost_cfg.drawio.png          # CFG calculate_cost (export PNG)
 ├── calculate_cost_cfg.drawio.svg          # CFG calculate_cost (export SVG)
 ├── raport_ai.docx                         # Raport comparativ teste AI
-├── raport_ai.txt                          # Raport comparativ teste AI (text)
-├── screenshots/                           # Capturi de ecran comenzi rulate (12 fișiere)
+├── screenshots/                           # Capturi de ecran comenzi rulate (10 fișiere)
 ├── teste_ai/                              # Suite de teste generate de AI (pentru comparație)
 │   ├── fitness_class_booking.py           # Copie a clasei pentru izolarea testelor AI
 │   ├── test_ai_equivalence_partitioning.py

@@ -116,20 +116,20 @@ class TestMutationKilling(unittest.TestCase):
             FitnessClassBooking("dance", "\t", 5, 10.0)
 
     # =========================================================================
-    # Ucide M76: `round(cost, 2)` → `round(cost, 3)`
+    # Ucide M75: `round(cost, 2)` → `round(cost, 3)`
     # =========================================================================
 
-    def test_kill_M76_cost_rounds_to_two_decimal_places(self) -> None:
+    def test_kill_M75_cost_rounds_to_two_decimal_places(self) -> None:
         """
-        Ucide M76: `return round(cost, 2)` → `return round(cost, 3)`.
+        Ucide M75: `return round(cost, 2)` → `return round(cost, 3)`.
 
         Scenariu: price_per_session = 1/3 ≈ 0.3333...,
                   sessions = 1, has_membership = False.
             cost brut = 1 × (1/3) = 0.3333...
             round(0.3333..., 2) = 0.33   ← implementarea CORECTĂ
-            round(0.3333..., 3) = 0.333  ← mutantul M76 (BUG!)
+            round(0.3333..., 3) = 0.333  ← mutantul M75 (BUG!)
 
-        assertEqual(cost, 0.33) eșuează pe M76 deoarece 0.333 ≠ 0.33.
+        assertEqual(cost, 0.33) eșuează pe M75 deoarece 0.333 ≠ 0.33.
 
         Bug real reprezentat: costuri cu 3 zecimale pot cauza
         erori la comparații exacte sau afișare monetară.
@@ -139,16 +139,16 @@ class TestMutationKilling(unittest.TestCase):
         self.assertEqual(cost, round(1 / 3, 2))      # 0.33
         self.assertNotEqual(cost, round(1 / 3, 3))   # ≠ 0.333
 
-    def test_kill_M76_membership_cost_rounds_to_two_decimal_places(self) -> None:
+    def test_kill_M75_membership_cost_rounds_to_two_decimal_places(self) -> None:
         """
-        Test auxiliar M76 cu membership discount aplicat.
+        Test auxiliar M75 cu membership discount aplicat.
 
         price = 1/3, sessions = 1, has_membership = True:
             cost = (1/3) × 0.80 = 0.2666...
             round(0.2666..., 2) = 0.27  ← corect
             round(0.2666..., 3) = 0.267 ← mutant (BUG)
 
-        assertEqual(cost, 0.27) eșuează pe M76.
+        assertEqual(cost, 0.27) eșuează pe M75.
         """
         b = FitnessClassBooking("yoga", "Instructor", 5, 1 / 3)
         cost = b.calculate_cost(1, True)
@@ -159,7 +159,7 @@ class TestMutationKilling(unittest.TestCase):
     # Documentare mutanți quasi-echivalenți / string mutations
     # =========================================================================
 
-    def test_document_M45_quasi_equivalent_none_client_cancel(self) -> None:
+    def test_document_M49_quasi_equivalent_none_client_cancel(self) -> None:
         """
         Documentare M49 (quasi-echivalent):
             Original: name = client_name.strip() if client_name else ""
