@@ -3,7 +3,8 @@
 **Materia:** Testarea Sistemelor Software (TSS)  
 **Tema:** T1 – Testare unitară în Python  
 **Framework:** `unittest` + `pytest 9.0.3` + `coverage 7.13.5` + `mutmut 2.5.1`  
-**Python:** 3.13.3
+**Python:** 3.13.3  
+**Videoclip Rulare Proiect**: https://youtu.be/1Kl7ehxihbY
 
 ---
 
@@ -373,42 +374,55 @@ ValueError          │
 
 ## 5. Acoperire la nivel de condiție (condition coverage)
 
+Acoperirea la nivel de condiție impune ca fiecare **condiție atomică** dintr-o decizie compusă să fie evaluată cel puțin o dată ca `True` și cel puțin o dată ca `False`, independent de celelalte condiții. În cazul operatorului `OR` cu evaluare în scurtcircuit, o condiție atomică este evaluată doar dacă toate condițiile precedente sunt `False`.
+
+Testele corespunzătoare se află în clasa `TestConditionCoverage` din `test_coverage.py`.
+
+### Condiție compusă `__init__` – instructor
+
+`not isinstance(instructor, str) OR not instructor OR not instructor.strip()`
+
+| ID condiție | Condiție atomică | True | False |
+|-------------|------------------|------|-------|
+| C_instr_isinstance | `not isinstance(instructor, str)` | `123` (int) → ValueError | `"Ana Pop"` → continuă |
+| C_instr_empty | `not instructor` | `""` → ValueError (short-circuit) | `"Ana Pop"` → continuă |
+| C_instr_strip | `not instructor.strip()` | `"   "` → ValueError | `"Ana Pop"` → valid |
+
 ### Condiție compusă `__init__` – max_spots
 
 `isinstance(max_spots, bool) OR not isinstance(max_spots, int) OR max_spots < 1 OR max_spots > 30`
 
-| Condiție atomică | True | False |
-|------------------|------|-------|
-| `isinstance(max_spots, bool)` | `True` (bool) → ValueError | `5` (int) → continuă |
-| `not isinstance(max_spots, int)` | `1.0` (float) → ValueError | `5` (int) → continuă |
-| `max_spots < 1` | `0` → ValueError | `5` → continuă |
-| `max_spots > 30` | `31` → ValueError | `5` → valid |
+| ID condiție | Condiție atomică | True | False |
+|-------------|------------------|------|-------|
+| C_init_isinstance_bool | `isinstance(max_spots, bool)` | `True` (bool) → ValueError | `5` (int) → continuă |
+| C_init_isinstance_int | `not isinstance(max_spots, int)` | `1.0` (float) → ValueError | `5` (int) → continuă |
+| C_init_min | `max_spots < 1` | `0` → ValueError | `5` → continuă |
+| C_init_max | `max_spots > 30` | `31` → ValueError | `30` → valid |
 
 ### Condiție compusă `book_spot` – validare client_name
 
 `not isinstance(client_name, str) OR not client_name OR not client_name.strip()`
 
-| Condiție atomică | True | False |
-|------------------|------|-------|
-| `not isinstance(client_name, str)` | `123` (int) → ValueError | `"Alice"` → C1a evaluată |
-| `not client_name` | `""` → ValueError (short-circuit) | `"Alice"` → C1b evaluată |
-| `not client_name.strip()` | `"   "` → ValueError | `"Bob"` → continuă |
+| ID condiție | Condiție atomică | True | False |
+|-------------|------------------|------|-------|
+| C1_isinstance | `not isinstance(client_name, str)` | `123` (int) → ValueError | `"Alice"` → C1_empty evaluată |
+| C1_empty | `not client_name` | `""` → ValueError (short-circuit) | `"Alice"` → C1_whitespace evaluată |
+| C1_whitespace | `not client_name.strip()` | `"   "` → ValueError | `"Bob"` → continuă |
 
 ### Combinații `calculate_cost` (D7 × D8)
 
-| has_membership | sessions ≥ 10 | Rezultat |
-|----------------|---------------|---------|
-| False | False | cost de bază (discount 0%) |
-| True | False | −20% membership |
-| False | True | −10% volum |
-| True | True | −30% aditiv (20% + 10% din prețul de bază) |
+Cele două condiții independente (`has_membership` și `sessions >= 10`) sunt testate în toate cele 4 combinații posibile (preț de bază: 10 ședințe × 10.0 lei):
+
+| ID | has_membership | sessions ≥ 10 | discount total | Cost așteptat |
+|----|----------------|---------------|----------------|---------------|
+| C2 | False | False | 0% | 5 × 10.0 = **50.0** |
+| C3 | True | False | 20% | 5 × 10.0 × 0.80 = **40.0** |
+| C4 | False | True | 10% | 10 × 10.0 × 0.90 = **90.0** |
+| C5 | True | True | 30% | 10 × 10.0 × 0.70 = **70.0** |
 
 ---
 
 ### Diagrame CFG (PNG)
-
-Imaginile de mai jos sunt exporturi din Draw.io / diagrams.net [4] și reprezintă
-varianta grafică finală a CFG-urilor.
 
 #### `__init__`
 <p align="center">
@@ -439,36 +453,30 @@ varianta grafică finală a CFG-urilor.
 
 | Categorie | Număr |
 |-----------|-------|
-| Total mutanți generați | 86 |
-| Uciși | 65 |
-| Suspicioși | 13 |
-| Supraviețuitori | 8 |
-| Scor inițial | 65/86 ≈ 75.6% |
+| Total mutanți generați | 80 |
+| Uciși | 53 |
+| Suspicioși | 16 |
+| Supraviețuitori | 11 |
+| Scor inițial | 53/80 ≈ 66.3% |
 
-### Rezumat mutmut
-
-`mutmut results` raportează acum:
-
-- `Suspicious (13)`: `M3, M5, M8, M10-M12, M15, M22, M29, M34-M36, M74`
-- `Survived (8)`: `M9, M14, M21, M26, M39, M49, M70, M75`
-
-### Clasificarea mutanților supraviețuitori (8)
+### Clasificarea mutanților supraviețuitori (11)
 
 | Grup | Mutanți | Tip | Acțiune |
 |------|---------|-----|---------|
-| Mutanți de text / mesaj | M9, M14, M21, M39, M70 | Modifică doar mesajele `ValueError` sau textul explicativ | Documentați, nu omorâți |
-| Quasi-echivalent | M26, M49 | Diferență observabilă doar pe inputuri foarte specifice | Documentat |
-| Echivalent algebric | M75 | `discount += 0.20` vs `discount = 0.20` în contextul actual | Documentat |
+| Grup A – Mutanți de text / mesaj | M9, M13, M20, M23, M35, M65 | Modifică doar mesajele `ValueError` adăugând prefix/sufix `"XX"` — excepția este în continuare aruncată | Documentați, nu omorâți |
+| Grup B – Quasi-echivalent | M45 | `cancel_booking`: diferență observabilă doar dacă există un client cu numele exact `"XXXX"` și se apelează `cancel_booking(None)` | Documentat |
+| Grup C – Comportamentali neechivalenți | M12, M22, M76 | Modifică logica de business; produc bug-uri reale | Omorâți prin teste suplimentare |
 
-**Scor final (mutanți comportamentali neechivalenți): 3/3 = 100%**
+**Scor final (mutanți comportamentali neechivalenți): 3/3 = 100%**  
+**Scor corectat (excl. string + quasi-echiv.): 56/72 ≈ 77.8%**
 
 ### Tabel detaliat mutanți comportamentali
 
 | Mutant | Original | Modificare mutmut | Efect bug | Test care îl omoară |
 |--------|----------|--------------------|-----------|---------------------|
 | M12 | `not instructor or not instructor.strip()` | `or` → `and` | Instructor `"   "` trece validarea | `test_kill_M12_whitespace_only_instructor_must_raise_value_error` |
-| M22 | `price_per_session <= 0` | `<= 0` → `<= 1` | Prețuri valide ≤ 1.0 aruncă ValueError | `test_init_price_just_above_zero_is_valid` (BVA) |
-| M76 | `round(cost, 2)` | `2` → `3` | Costul returnat cu 3 zecimale | `test_kill_M76_cost_rounds_to_two_decimal_places` |
+| M22 | `price_per_session <= 0` | `<= 0` → `<= 1` | Prețuri valide în `(0, 1]` aruncă ValueError | `test_init_price_just_above_zero_is_valid` (BVA) |
+| M76 | `round(cost, 2)` | `2` → `3` | Costul returnat cu 3 zecimale în loc de 2 | `test_kill_M76_cost_rounds_to_two_decimal_places` |
 
 ---
 
@@ -507,72 +515,63 @@ WSL2.
 Comenzile de mai jos urmează documentația oficială pentru pytest [1],
 coverage.py [2] și mutmut [3].
 
-### Teste (Windows / WSL / Linux - pytest)
+> **Rulare rapidă (recomandat):** scriptul `run_coverage.sh` execută automat toți pașii de mai jos (instalare, teste, coverage, mutmut). Se rulează din WSL cu venv-ul activat:
+> ```bash
+> bash run_coverage.sh
+> ```
+
+### Pregătire mediu (WSL + venv)
 
 ```bash
+# Creare și activare virtual environment
+python3 -m venv tss_venv
+source tss_venv/bin/activate
+
 # Instalare dependențe
-pip install pytest coverage
-
-# Rulare toate testele
-python -m pytest test_*.py -v
-
-# Coverage instrucțiuni + ramuri
-python -m coverage run --branch -m pytest test_*.py
-python -m coverage report -m --include="fitness_class_booking.py"
-python -m coverage html --include="fitness_class_booking.py"
-# Deschide htmlcov/index.html în browser
-```
-
-### Analiză mutanți (WSL + mutmut)
-
-```bash
-# Instalare mutmut 2.x în WSL (ca root sau cu --break-system-packages)
-pip install --break-system-packages --ignore-installed "mutmut<3"
-
-# Creare symlink python dacă lipsește
-ln -sf /usr/bin/python3 /usr/local/bin/python
+pip install pytest coverage "mutmut<3"
 
 # Navigare la proiect
 cd <path_catre_TSS_Proiect>  # ex: /mnt/c/Users/alexn/Documents/GitHub/TSS_Proiect
+```
+
+### Teste unitare (pytest)
+
+```bash
+# Rulare toate testele cu output verbose
+python -m pytest test_*.py -v
+```
+
+### Coverage (instrucțiuni + ramuri)
+
+```bash
+# Rulare suite cu colectare coverage
+python -m coverage run --branch -m pytest test_*.py
+
+# Raport în consolă (afișează liniile/ramurile neacoperite)
+python -m coverage report -m --include="fitness_class_booking.py"
+
+# Raport HTML (deschide htmlcov/index.html în browser)
+python -m coverage html --include="fitness_class_booking.py"
+```
+
+### Analiză mutanți (mutmut)
+
+```bash
+# Creare symlink python dacă lipsește (doar dacă mutmut nu găsește interpretorul)
+ln -sf /usr/bin/python3 /usr/local/bin/python
 
 # Rulare analiză mutanți
 mutmut run --paths-to-mutate fitness_class_booking.py \
            --tests-dir . \
            --runner "python -m pytest"
 
-# Vizualizare rezultate
+# Vizualizare rezultate sumar
 mutmut results
+
+# Inspectare mutant individual (înlocuiește <ID> cu numărul mutantului)
 mutmut show <ID>
 ```
 
-### Capturi recomandate
-
-1. Teste unitare
-
-```bash
-python -m pytest test_*.py -v
-```
-
-2. Coverage in consola
-
-```bash
-python -m coverage run --branch -m pytest test_*.py
-python -m coverage report -m --include="fitness_class_booking.py"
-```
-
-3. Coverage HTML
-
-```bash
-python -m coverage html --include="fitness_class_booking.py"
-```
-
-4. Mutation testing
-
-```bash
-mutmut run --paths-to-mutate fitness_class_booking.py --tests-dir . --runner "python -m pytest"
-mutmut results
-mutmut show <ID>
-```
 
 ### Capturi de ecran
 
@@ -630,17 +629,36 @@ Mai jos sunt capturile reale, in ordinea comenzilor rulate.
 
 ```
 TSS_Proiect/
-├── fitness_class_booking.py          # Clasa de testat (4 metode: __init__ + 3 instance methods)
-├── test_equivalence_partitioning.py  # Strategia 1: clase de echivalență (EC01–EC30)
-├── test_boundary_value_analysis.py   # Strategia 2: valori de frontieră (BVA01–BVA23)
-├── test_coverage.py                  # Strategiile 3–5: instrucțiune / decizie / condiție
-├── test_independent_circuits.py      # Strategia 6: basis path testing (McCabe)
-├── test_mutation.py                  # Strategiile 7–8: raport mutmut + teste suplimentare
-├── run_coverage.sh                   # Script de rulare complet (bash/WSL)
-└── README.md                         # Acest fișier
+├── fitness_class_booking.py               # Clasa de testat (4 metode: __init__ + 3 instance methods)
+├── test_equivalence_partitioning.py       # Strategia 1: clase de echivalență (EC01–EC30)
+├── test_boundary_value_analysis.py        # Strategia 2: valori de frontieră (BVA01–BVA23)
+├── test_coverage.py                       # Strategiile 3–5: instrucțiune / decizie / condiție
+├── test_independent_circuits.py           # Strategia 6: basis path testing (McCabe)
+├── test_mutation.py                       # Strategiile 7–8: raport mutmut + teste suplimentare
+├── run_coverage.sh                        # Script de rulare complet (bash/WSL)
+├── init_cfg.drawio.png                    # CFG __init__ (export PNG)
+├── init_cfg.drawio.svg                    # CFG __init__ (export SVG)
+├── book_spot_cfg.drawio.png               # CFG book_spot (export PNG)
+├── book_spot_cfg.drawio.svg               # CFG book_spot (export SVG)
+├── cancel_booking_cfg.drawio.png          # CFG cancel_booking (export PNG)
+├── cancel_booking_cfg.drawio.svg          # CFG cancel_booking (export SVG)
+├── calculate_cost_cfg.drawio.png          # CFG calculate_cost (export PNG)
+├── calculate_cost_cfg.drawio.svg          # CFG calculate_cost (export SVG)
+├── raport_ai.docx                         # Raport comparativ teste AI
+├── raport_ai.txt                          # Raport comparativ teste AI (text)
+├── screenshots/                           # Capturi de ecran comenzi rulate (12 fișiere)
+├── teste_ai/                              # Suite de teste generate de AI (pentru comparație)
+│   ├── fitness_class_booking.py           # Copie a clasei pentru izolarea testelor AI
+│   ├── test_ai_equivalence_partitioning.py
+│   ├── test_ai_boundary_value_analysis.py
+│   ├── test_ai_coverage.py
+│   ├── test_ai_independent_circuits.py
+│   ├── test_ai_mutation.py
+│   └── __init__.py
+└── README.md                              
 ```
 
-**Total teste: 127 | Toate trec (0 eșuate)**
+**Total teste (suite principală): 127 | Toate trec (0 eșuate)**
 
 ---
 
@@ -648,19 +666,17 @@ TSS_Proiect/
 
 ### Linkuri oficiale
 
-- [pytest - official documentation](https://docs.pytest.org/)
-- [coverage.py - official documentation](https://coverage.readthedocs.io/)
-- [mutmut - official documentation](https://mutmut.readthedocs.io/en/)
+- [pytest - official documentation][1]
+- [coverage.py - official documentation][2]
+- [mutmut - official documentation][3]
 - [draw.io / diagrams.net - official website](https://www.diagrams.net/)
 - [unittest - Python standard library documentation](https://docs.python.org/3/library/unittest.html)
 - [VS Code - documentation](https://code.visualstudio.com/docs)
 - [Windows Subsystem for Linux - documentation](https://learn.microsoft.com/windows/wsl/)
 
-### Referințe
+
 
 [1]: https://docs.pytest.org/
 [2]: https://coverage.readthedocs.io/
 [3]: https://mutmut.readthedocs.io/en/
-[4]: https://www.diagrams.net/
 
-*Proiect universitar TSS – T1 Testare unitară Python | `unittest` + `pytest` + `coverage` + `mutmut`*
