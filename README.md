@@ -15,14 +15,13 @@ anulări cu promovare automată din waitlist.
 
 | Metodă | Descriere |
 |--------|-----------|
-| `__init__(class_name, instructor, max_spots, price_per_session)` | Inițializează sesiunea; validează toți parametrii |
-| `book_spot(client_name) → str` | Rezervă un loc: `"confirmed"` / `"waitlist"` / `"rejected"` |
-| `cancel_booking(client_name) → bool` | Anulează rezervare; promovează automat din waitlist |
-| `calculate_cost(sessions, has_membership) → float` | Calculează costul unei ședințe din abonament cu reduceri aditiv (membership 20% + volum 10%) |
+| `__init__(class_name, instructor, max_spots, price_per_session)` | Creează o sesiune de fitness și validează datele inițiale: tipul clasei, numele instructorului, capacitatea maximă și prețul pe ședință |
+| `book_spot(client_name) → str` | Încearcă să rezerve un loc pentru client: confirmă rezervarea dacă există locuri libere, adaugă clientul pe waitlist dacă sala este plină sau îl respinge dacă și waitlist-ul este plin |
+| `cancel_booking(client_name) → bool` |  Anulează rezervarea unui client confirmat sau aflat pe waitlist; dacă se eliberează un loc confirmat, promovează automat primul client din waitlist |
+| `calculate_cost(sessions, has_membership) → float` | Calculează costul total pentru 1–20 ședințe, aplicând reduceri aditive: 20% pentru membership și 10% pentru minimum 10 ședințe |
 
 **Tipuri de clase valide:** `"dance"`, `"pilates"`, `"yoga"`, `"zumba"`  
-**Capacitate:** 1–30 locuri confirmate + max 5 pe waitlist  
-**Validări `max_spots`:** trebuie să fie `int` pur (nu `float`, nu `bool`); `True` și `False` sunt respinse explicit prin verificarea `isinstance(max_spots, bool)`
+**Capacitate:** 1–30 locuri confirmate + max 5 pe waitlist 
 
 ### Fragmente de cod relevante
 
@@ -30,19 +29,43 @@ anulări cu promovare automată din waitlist.
 
 ```python
 if class_name not in self.VALID_CLASSES:
-    raise ValueError(...)
+    raise ValueError(
+        f"class_name must be one of {sorted(self.VALID_CLASSES)}, got '{class_name}'"
+    )
 if not isinstance(instructor, str) or not instructor or not instructor.strip():
-    raise ValueError(...)
+    raise ValueError("instructor must be a non-empty string")
 if isinstance(max_spots, bool) or not isinstance(max_spots, int) or max_spots < 1 or max_spots > 30:
-    raise ValueError(...)
+    raise ValueError("max_spots must be an integer between 1 and 30 inclusive")
 if not isinstance(price_per_session, (int, float)) or price_per_session <= 0:
-    raise ValueError(...)
+    raise ValueError("price_per_session must be greater than 0")
+
 ```
 
-Acesta este cel mai important bloc de validare: de aici vin mai multe clase de
-echivalență, valorile de frontieră și cele 4 decizii din CFG-ul pentru
-`__init__`. Verificarea `isinstance(max_spots, bool)` există ca să respingă
-explicit `True` și `False`, chiar dacă `bool` este subclasă de `int`.
+Blocul validează parametrii primiți de constructor înainte ca obiectul să fie creat.
+
+- `class_name`
+  - trebuie să fie una dintre clasele valide: `"dance"`, `"pilates"`, `"yoga"`, `"zumba"`
+  - dacă valoarea nu există în `VALID_CLASSES`, se aruncă `ValueError`
+
+- `instructor`
+  - trebuie să fie de tip `str`
+  - nu poate fi șir gol: `""`
+  - nu poate conține doar spații: `"   "`
+  - verificarea cu `strip()` elimină spațiile de la început și final
+
+- `max_spots`
+  - trebuie să fie `int`
+  - trebuie să fie în intervalul `[1, 30]`
+  - valorile `True` și `False` sunt respinse explicit prin `isinstance(max_spots, bool)`, deoarece în Python `bool` este subclasă de `int`
+
+- `price_per_session`
+  - trebuie să fie număr: `int` sau `float`
+  - trebuie să fie strict mai mare decât `0`
+
+Din punct de vedere al testării, acest bloc este important deoarece produce:
+- clase de echivalență valide și invalide
+- valori de frontieră pentru `max_spots` și `price_per_session`
+- 4 decizii principale în CFG-ul metodei `__init__`
 
 #### 2) Fluxul de rezervare din `book_spot`
 
@@ -58,11 +81,60 @@ else:
     return "rejected"
 ```
 
-Acest fragment arată clar cele 3 rezultate posibile: loc confirmat, mutare pe
-waitlist sau refuz. E foarte util de pus în raport fiindcă se vede imediat
-tranziția între ramuri și limita de 5 persoane din waitlist.
+Acest bloc stabilește rezultatul unei rezervări în funcție de locurile disponibile.
 
-#### 3) Calculul costului în `calculate_cost`
+- Dacă există locuri libere:
+  - clientul este adăugat în `_confirmed`
+  - `booked_spots` crește cu 1
+  - se returnează `"confirmed"`
+
+- Dacă sala este plină, dar waitlist-ul are loc
+  - clientul este adăugat în `waitlist`
+  - se returnează `"waitlist"`
+
+- Dacă sala și waitlist-ul sunt pline:
+  - clientul este respins
+  - se returnează `"rejected"`
+
+Pentru testare, fragmentul acoperă cele 3 ramuri principale ale metodei `book_spot`: confirmare, listă de așteptare și respingere.
+
+#### 3) Anularea rezervării în `cancel_booking`
+
+```python
+if name in self._confirmed:
+    self._confirmed.remove(name)
+    self.booked_spots -= 1
+    if self.waitlist:
+        promoted = self.waitlist.pop(0)
+        self._confirmed.append(promoted)
+        self.booked_spots += 1
+    return True
+elif name in self.waitlist:
+    self.waitlist.remove(name)
+    return True
+else:
+    return False
+```
+
+Acest bloc gestionează anularea unei rezervări.
+
+- Dacă clientul este în lista de confirmați:
+  - este eliminat din _confirmed
+  - booked_spots scade cu 1
+  - dacă există persoane în waitlist, prima este promovată automat
+  - metoda returnează True
+
+- Dacă clientul este doar pe waitlist:
+  - este eliminat din waitlist
+  - metoda returnează True
+
+- Dacă clientul nu este găsit:
+  - nu se modifică nicio listă
+  - metoda returnează False
+
+Pentru testare, fragmentul este important deoarece acoperă cele 3 situații principale: anulare din lista de confirmați, anulare din waitlist și client inexistent.
+
+#### 4) Calculul costului în `calculate_cost`
 
 ```python
 cost = sessions * self.price_per_session
@@ -76,21 +148,21 @@ if sessions >= 10:
 return round(cost * (1 - discount), 2)
 ```
 
-Aici se vede logica de business: reducerile sunt aditive, nu se aplică pe rând
-una peste alta, iar rezultatul este rotunjit la două zecimale. Acesta este
-exact locul vizat și de testele de mutation testing.
+Acest bloc calculează costul final pentru un număr de ședințe.
 
-#### 4) Un test relevant de boundary value analysis
+- Mai întâi se calculează costul de bază: `cost = sessions * price_per_session`
 
-```python
-def test_init_price_just_above_zero_is_valid(self) -> None:
-    b = FitnessClassBooking("yoga", "Instructor", 5, 0.01)
-    self.assertAlmostEqual(b.price_per_session, 0.01)
-```
+- Apoi se pornește de la un discount inițial de `0%`
 
-Acest test arată cum verifici frontiera pentru `price_per_session > 0`: `0.0`
-trebuie respins, iar `0.01` trebuie acceptat. Este și testul care omoară
-mutantul `M22`.
+- Dacă utilizatorul are membership: se adaugă o reducere de `20%`
+
+- Dacă numărul de ședințe este cel puțin `10`: se adaugă o reducere de volum de `10%`
+
+- Reducerile sunt aditive: membership + volum = `20% + 10% = 30%`;
+
+- La final, costul este rotunjit la două zecimale cu `round(..., 2)`.
+
+Pentru testare, fragmentul este important deoarece verifică toate combinațiile de reduceri și rotunjirea rezultatului final.
 
 ---
 
@@ -195,6 +267,14 @@ ValueError           or not instructor or not instructor.strip()
 
 **V(G) = 4 + 1 = 5** | Circuite: PATH_INIT_1..5
 
+| Circuit | Cale | Condiții | Rezultat |
+|---------|------|----------|---------|
+| PATH_INIT_1 | N1→N2(T)→N3→Nexit | D1=T (`class_name="crossfit"`) | ValueError |
+| PATH_INIT_2 | N1→N2(F)→N4(T)→N5→Nexit | D1=F, D2=T (`instructor=""`) | ValueError |
+| PATH_INIT_3 | N1→N2(F)→N4(F)→N6(T)→N7→Nexit | D1=F, D2=F, D3=T (`max_spots=0`) | ValueError |
+| PATH_INIT_4 | N1→N2(F)→N4(F)→N6(F)→N8(T)→N9→Nexit | D1=F, D2=F, D3=F, D4=T (`price=0.0`) | ValueError |
+| PATH_INIT_5 | N1→N2(F)→N4(F)→N6(F)→N8(F)→N10→Nexit | D1=F, D2=F, D3=F, D4=F | obiect creat |
+
 ### `book_spot` – V(G) = 4
 
 ```
@@ -214,6 +294,13 @@ N1 → N2: if not isinstance(client_name, str) or not client_name or not client_
 
 **V(G) = 3 + 1 = 4** | Circuite: PATH_BS_1..4
 
+| Circuit | Cale | Condiții | Rezultat |
+|---------|------|----------|---------|
+| PATH_BS_1 | N1→N2(T)→N3→Nexit | D1=T (`client_name=""`) | ValueError |
+| PATH_BS_2 | N1→N2(F)→N4→N5(T)→N6→Nexit | D1=F, D2=T (loc liber) | `"confirmed"` |
+| PATH_BS_3 | N1→N2(F)→N4→N5(F)→N7(T)→N8→Nexit | D1=F, D2=F, D3=T (waitlist disponibil) | `"waitlist"` |
+| PATH_BS_4 | N1→N2(F)→N4→N5(F)→N7(F)→N9→Nexit | D1=F, D2=F, D3=F (waitlist plin) | `"rejected"` |
+
 ### `cancel_booking` – V(G) = 4
 
 ```
@@ -232,6 +319,13 @@ N1: name = strip(client_name)  →  N2: if name in _confirmed
 ```
 
 **V(G) = 3 + 1 = 4** | Circuite: PATH_CB_1..4
+
+| Circuit | Cale | Condiții | Rezultat |
+|---------|------|----------|---------|
+| PATH_CB_1 | N1→N2(T)→N3→N4(F)→return True→Nexit | D4=T, D5=F (client confirmat, waitlist gol) | `True` |
+| PATH_CB_2 | N1→N2(T)→N3→N4(T)→N5→return True→Nexit | D4=T, D5=T (client confirmat, waitlist non-gol) | `True` + promovare |
+| PATH_CB_3 | N1→N2(F)→N6(T)→N7→Nexit | D4=F, D6=T (client în waitlist) | `True` |
+| PATH_CB_4 | N1→N2(F)→N6(F)→N8→Nexit | D4=F, D6=F (client negăsit) | `False` |
 
 ### `calculate_cost` – V(G) = 4
 
