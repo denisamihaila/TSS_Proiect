@@ -82,10 +82,11 @@ class FitnessClassBooking:
 
     # ------------------------------------------------------------------
     def calculate_cost(self, sessions: int, has_membership: bool) -> float:
-        """Calculează costul total pentru 'sessions' ședințe dintr-un membership [1, 20].
-        Reducerile din prețul de bază sunt: "membership" −20% (sesiunile 1–20), "volum" −10% (sesiunile 10–20).
-        Un membership are 20 de sesiuni. Cele două reduceri se vor aduna, nu se vor aplica pe rând.
-        Ridică ValueError dacă sessions este în afara domeniului sau non-integer."""
+        """Calculează costul total pentru un număr de ședințe (între 1 și 20).
+        Reduceri aplicate aditiv față de prețul de bază:
+        - −20% dacă has_membership este True
+        - −10% dacă sessions >= 10 (reducere de volum)
+        Ridică ValueError dacă sessions nu este întreg sau este în afara [1, 20]."""
         if not isinstance(sessions, int) or isinstance(sessions, bool) or sessions < 1 or sessions > 20:
             raise ValueError(
                 f"sessions must be between 1 and 20 inclusive, got {sessions}"

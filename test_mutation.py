@@ -68,9 +68,9 @@ Grup C – Mutanți comportamentali NEECHIVALENȚI (3 mutanți)
   generat pe versiunea fără această verificare; dacă mutmut ar fi rulat acum,
   M19 ar fi din nou relevant.
 
-  ⚙️  M22 este omorât de testul BVA din test_boundary_value_analysis.py
+  !  M22 este omorât de testul BVA din test_boundary_value_analysis.py
        (BVA_price_just_above_zero).
-  ⚙️  M12 și M76 sunt omorâți de testele suplimentare din acest fișier.
+  !  M12 și M76 sunt omorâți de testele suplimentare din acest fișier.
 
 ───────────────────────────────────────────────────────────────────────────────
 SUMAR FINAL (după adăugarea testelor suplimentare):

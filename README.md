@@ -2,8 +2,8 @@
 
 **Materia:** Testarea Sistemelor Software (TSS)  
 **Tema:** T1 – Testare unitară în Python  
-**Framework:** `unittest` + `pytest 9.0.2` + `coverage 7.13.5` + `mutmut 2.5.1`  
-**Python:** 3.10+
+**Framework:** `unittest` + `pytest 9.0.3` + `coverage 7.13.5` + `mutmut 2.5.1`  
+**Python:** 3.13.3
 
 ---
 
@@ -18,7 +18,7 @@ anulări cu promovare automată din waitlist.
 | `__init__(class_name, instructor, max_spots, price_per_session)` | Inițializează sesiunea; validează toți parametrii |
 | `book_spot(client_name) → str` | Rezervă un loc: `"confirmed"` / `"waitlist"` / `"rejected"` |
 | `cancel_booking(client_name) → bool` | Anulează rezervare; promovează automat din waitlist |
-| `calculate_cost(sessions, has_membership) → float` | Calculează costul unui ciclu [1–20] cu reduceri aditiv (membership 20% + volum 10%) |
+| `calculate_cost(sessions, has_membership) → float` | Calculează costul unei ședințe din abonament cu reduceri aditiv (membership 20% + volum 10%) |
 
 **Tipuri de clase valide:** `"dance"`, `"pilates"`, `"yoga"`, `"zumba"`  
 **Capacitate:** 1–30 locuri confirmate + max 5 pe waitlist  
