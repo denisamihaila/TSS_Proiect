@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="1600" viewBox="0 0 1180 1600">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#334155" />
+    </marker>
+    <style>
+      .node { fill: #f8fafc; stroke: #334155; stroke-width: 2; }
+      .decision { fill: #fff7ed; stroke: #9a3412; stroke-width: 2; }
+      .error { fill: #fef2f2; stroke: #991b1b; stroke-width: 2; }
+      .return { fill: #ecfdf5; stroke: #166534; stroke-width: 2; }
+      .text { font-family: Arial, sans-serif; font-size: 18px; fill: #0f172a; }
+      .small { font-family: Arial, sans-serif; font-size: 15px; fill: #334155; }
+      .edge { stroke: #334155; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+      .label { font-family: Arial, sans-serif; font-size: 15px; fill: #475569; font-weight: bold; }
+      .title { font-family: Arial, sans-serif; font-size: 28px; fill: #0f172a; font-weight: bold; }
+    </style>
+  </defs>
+
+  <text x="590" y="45" text-anchor="middle" class="title">CFG - evaluate_client_package</text>
+
+  <rect x="430" y="75" width="320" height="54" rx="8" class="node" />
+  <text x="590" y="109" text-anchor="middle" class="text">N1: Start</text>
+
+  <polygon points="590,170 760,240 590,310 420,240" class="decision" />
+  <text x="590" y="229" text-anchor="middle" class="text">D1: date pachet</text>
+  <text x="590" y="252" text-anchor="middle" class="small">invalide?</text>
+
+  <rect x="835" y="210" width="250" height="60" rx="8" class="error" />
+  <text x="960" y="246" text-anchor="middle" class="text">N3: ValueError</text>
+
+  <rect x="395" y="350" width="390" height="74" rx="8" class="node" />
+  <text x="590" y="380" text-anchor="middle" class="text">N4: attended = 0</text>
+  <text x="590" y="404" text-anchor="middle" class="text">no_show = 0; cancelled = 0</text>
+
+  <polygon points="590,470 770,545 590,620 410,545" class="decision" />
+  <text x="590" y="535" text-anchor="middle" class="text">D2: mai exista status</text>
+  <text x="590" y="558" text-anchor="middle" class="small">in session_history?</text>
+
+  <polygon points="590,670 770,745 590,820 410,745" class="decision" />
+  <text x="590" y="735" text-anchor="middle" class="text">D3: status invalid?</text>
+  <text x="590" y="758" text-anchor="middle" class="small">tip sau valoare</text>
+
+  <rect x="835" y="715" width="250" height="60" rx="8" class="error" />
+  <text x="960" y="751" text-anchor="middle" class="text">N7: ValueError</text>
+
+  <polygon points="590,860 770,935 590,1010 410,935" class="decision" />
+  <text x="590" y="925" text-anchor="middle" class="text">D4: status ==</text>
+  <text x="590" y="948" text-anchor="middle" class="small">"attended"?</text>
+
+  <rect x="150" y="905" width="230" height="60" rx="8" class="node" />
+  <text x="265" y="941" text-anchor="middle" class="text">N9: attended += 1</text>
+
+  <rect x="805" y="870" width="260" height="95" rx="8" class="node" />
+  <text x="935" y="902" text-anchor="middle" class="text">N10: ramura else</text>
+  <text x="935" y="927" text-anchor="middle" class="small">daca no_show: +1</text>
+  <text x="935" y="950" text-anchor="middle" class="small">daca cancelled: +1</text>
+
+  <rect x="375" y="1065" width="430" height="70" rx="8" class="node" />
+  <text x="590" y="1094" text-anchor="middle" class="text">N11: used = attended + no_show</text>
+  <text x="590" y="1118" text-anchor="middle" class="small">remaining si cost de baza</text>
+
+  <polygon points="590,1180 770,1250 590,1320 410,1250" class="decision" />
+  <text x="590" y="1241" text-anchor="middle" class="text">D5: used &gt;</text>
+  <text x="590" y="1264" text-anchor="middle" class="small">package_sessions?</text>
+
+  <rect x="835" y="1220" width="250" height="60" rx="8" class="error" />
+  <text x="960" y="1256" text-anchor="middle" class="text">N13: ValueError</text>
+
+  <polygon points="300,1210 445,1270 300,1330 155,1270" class="decision" />
+  <text x="300" y="1264" text-anchor="middle" class="text">D6: membership?</text>
+
+  <rect x="90" y="1360" width="260" height="58" rx="8" class="node" />
+  <text x="220" y="1395" text-anchor="middle" class="text">N15: aplica discount</text>
+
+  <polygon points="590,1360 790,1430 590,1500 390,1430" class="decision" />
+  <text x="590" y="1419" text-anchor="middle" class="text">D7: remaining == 0</text>
+  <text x="590" y="1442" text-anchor="middle" class="small">and no_show == 0?</text>
+
+  <rect x="820" y="1400" width="250" height="58" rx="8" class="return" />
+  <text x="945" y="1435" text-anchor="middle" class="text">completed_clean</text>
+
+  <rect x="430" y="1515" width="320" height="58" rx="8" class="return" />
+  <text x="590" y="1550" text-anchor="middle" class="text">completed / active</text>
+
+  <path d="M590 129 L590 170" class="edge" />
+  <path d="M760 240 L835 240" class="edge" />
+  <text x="795" y="230" class="label">True</text>
+  <path d="M590 310 L590 350" class="edge" />
+  <text x="610" y="335" class="label">False</text>
+  <path d="M590 424 L590 470" class="edge" />
+  <path d="M590 620 L590 670" class="edge" />
+  <text x="610" y="650" class="label">True</text>
+  <path d="M770 745 L835 745" class="edge" />
+  <text x="800" y="735" class="label">True</text>
+  <path d="M590 820 L590 860" class="edge" />
+  <text x="610" y="845" class="label">False</text>
+  <path d="M410 935 L380 935" class="edge" />
+  <text x="386" y="925" class="label">True</text>
+  <path d="M770 935 L805 935" class="edge" />
+  <text x="778" y="925" class="label">False</text>
+  <path d="M265 965 L265 1028 L505 1028 L505 545 L410 545" class="edge" />
+  <path d="M935 965 L935 1028 L675 1028 L675 545 L770 545" class="edge" />
+  <path d="M590 620 L275 620 L275 1065 L590 1065" class="edge" />
+  <text x="290" y="610" class="label">False</text>
+  <path d="M590 1135 L590 1180" class="edge" />
+  <path d="M770 1250 L835 1250" class="edge" />
+  <text x="800" y="1240" class="label">True</text>
+  <path d="M410 1250 L445 1270" class="edge" />
+  <text x="435" y="1240" class="label">False</text>
+  <path d="M300 1330 L220 1360" class="edge" />
+  <text x="245" y="1340" class="label">True</text>
+  <path d="M445 1270 L590 1360" class="edge" />
+  <text x="496" y="1295" class="label">False</text>
+  <path d="M350 1389 L590 1360" class="edge" />
+  <path d="M790 1430 L820 1430" class="edge" />
+  <text x="798" y="1420" class="label">True</text>
+  <path d="M590 1500 L590 1515" class="edge" />
+  <text x="610" y="1507" class="label">False</text>
+</svg>
