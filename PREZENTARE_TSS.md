@@ -46,7 +46,8 @@ Parametri:
 - `attended` si `no_show` consuma sedinte;
 - `cancelled` nu consuma sedinte;
 - membership aplica reducere de 20%;
-- statusul poate fi `active`, `completed`, `completed_clean`.
+- statusul poate fi `active`, `completed_successfully`,
+  `completed_with_absences`.
 
 ## Slide 7 - Cerinta profesoarei bifata
 
@@ -65,8 +66,8 @@ Partitionare in clase de echivalenta:
 
 - istoric valid gol;
 - istoric valid mixt;
-- pachet finalizat curat;
-- pachet finalizat cu no-show;
+- pachet finalizat cu succes;
+- pachet finalizat cu absente;
 - tipuri invalide;
 - status invalid;
 - sedinte consumate peste pachet.
@@ -104,7 +105,7 @@ Decizii principale:
 - ramura `attended`;
 - verificarea depasirii pachetului;
 - membership;
-- status final curat.
+- status final cu succes.
 
 ## Slide 12 - Coverage
 

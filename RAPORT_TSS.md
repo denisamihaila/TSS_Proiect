@@ -46,7 +46,7 @@ Date de iesire:
 - `used_sessions`: `attended + no_show`;
 - `remaining_sessions`: sedinte ramase;
 - `total_cost`: costul pachetului, rotunjit la 2 zecimale;
-- `status`: `active`, `completed` sau `completed_clean`.
+- `status`: `active`, `completed_successfully` sau `completed_with_absences`.
 
 Reguli de business:
 
@@ -54,9 +54,9 @@ Reguli de business:
 - `cancelled` nu consuma sedinte;
 - daca exista membership, costul total se reduce cu 20%;
 - daca toate sedintele sunt consumate fara `no_show`, statusul este
-  `completed_clean`;
+  `completed_successfully`;
 - daca toate sedintele sunt consumate cu cel putin un `no_show`, statusul este
-  `completed`;
+  `completed_with_absences`;
 - daca mai exista sedinte disponibile, statusul este `active`.
 
 ## 4. Partitionare in clase de echivalenta
@@ -67,8 +67,8 @@ Clase valide:
 | --- | --- | --- | --- |
 | EC1 | istoric gol valid | `([], 5, False)` | `active` |
 | EC2 | istoric mixt valid | `(["attended", "no_show", "cancelled"], 5, True)` | calcule corecte + discount |
-| EC3 | pachet complet fara no-show | `(["attended"], 1, False)` | `completed_clean` |
-| EC4 | pachet complet cu no-show | `(["no_show"], 1, False)` | `completed` |
+| EC3 | pachet complet fara no-show | `(["attended"], 1, False)` | `completed_successfully` |
+| EC4 | pachet complet cu no-show | `(["no_show"], 1, False)` | `completed_with_absences` |
 
 Clase invalide:
 
@@ -100,7 +100,7 @@ Frontiera pentru finalizarea pachetului:
 | Caz | Exemplu | Rezultat |
 | --- | --- | --- |
 | inainte de finalizare | 2 sedinte consumate din 3 | `active` |
-| exact la finalizare, fara no-show | 3 attended din 3 | `completed_clean` |
+| exact la finalizare, fara no-show | 3 attended din 3 | `completed_successfully` |
 | peste pachet | 4 consumate din 3 | `ValueError` |
 
 Teste: `test_boundary_value_analysis.py`.

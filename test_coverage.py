@@ -48,15 +48,15 @@ class TestStatementCoverage(unittest.TestCase):
         self.assertEqual(result["total_cost"], 200.0)
         self.assertEqual(result["status"], "active")
 
-    def test_sc_completed_clean_without_membership(self) -> None:
+    def test_sc_completed_successfully_without_membership(self) -> None:
         result = make_booking().evaluate_client_package(["attended"], 1, False)
 
-        self.assertEqual(result["status"], "completed_clean")
+        self.assertEqual(result["status"], "completed_successfully")
 
-    def test_sc_completed_with_no_show(self) -> None:
+    def test_sc_completed_with_absences_with_no_show(self) -> None:
         result = make_booking().evaluate_client_package(["no_show"], 1, False)
 
-        self.assertEqual(result["status"], "completed")
+        self.assertEqual(result["status"], "completed_with_absences")
 
     def test_sc_used_sessions_over_package_raises(self) -> None:
         with self.assertRaises(ValueError):
@@ -113,17 +113,17 @@ class TestDecisionCoverage(unittest.TestCase):
 
         self.assertEqual(result["total_cost"], 100.0)
 
-    def test_dc_completed_clean_condition_true(self) -> None:
+    def test_dc_completed_successfully_condition_true(self) -> None:
         result = make_booking().evaluate_client_package(["attended"], 1, False)
 
-        self.assertEqual(result["status"], "completed_clean")
+        self.assertEqual(result["status"], "completed_successfully")
 
-    def test_dc_completed_clean_condition_false_completed(self) -> None:
+    def test_dc_completed_successfully_condition_false_absences(self) -> None:
         result = make_booking().evaluate_client_package(["no_show"], 1, False)
 
-        self.assertEqual(result["status"], "completed")
+        self.assertEqual(result["status"], "completed_with_absences")
 
-    def test_dc_completed_clean_condition_false_active(self) -> None:
+    def test_dc_completed_successfully_condition_false_active(self) -> None:
         result = make_booking().evaluate_client_package(["attended"], 2, False)
 
         self.assertEqual(result["status"], "active")
@@ -145,12 +145,12 @@ class TestConditionCoverage(unittest.TestCase):
     def test_cc_compound_status_both_atomic_conditions_true(self) -> None:
         result = make_booking().evaluate_client_package(["attended"], 1, False)
 
-        self.assertEqual(result["status"], "completed_clean")
+        self.assertEqual(result["status"], "completed_successfully")
 
     def test_cc_compound_status_remaining_true_no_show_false(self) -> None:
         result = make_booking().evaluate_client_package(["no_show"], 1, False)
 
-        self.assertEqual(result["status"], "completed")
+        self.assertEqual(result["status"], "completed_with_absences")
 
     def test_cc_compound_status_remaining_false(self) -> None:
         result = make_booking().evaluate_client_package(["attended"], 2, False)

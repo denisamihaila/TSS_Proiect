@@ -24,8 +24,8 @@ class TestMutationFocusedCases(unittest.TestCase):
 
         self.assertEqual(result["used_sessions"], 2)
         self.assertEqual(result["remaining_sessions"], 0)
-        self.assertEqual(result["status"], "completed")
-        self.assertNotEqual(result["status"], "completed_clean")
+        self.assertEqual(result["status"], "completed_with_absences")
+        self.assertNotEqual(result["status"], "completed_successfully")
 
     def test_mutation_cancelled_session_does_not_consume_package_session(self) -> None:
         result = make_booking().evaluate_client_package(

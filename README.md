@@ -34,8 +34,8 @@ statusul pachetului.
 Statusuri posibile:
 
 - `active` - clientul mai are sedinte disponibile
-- `completed` - clientul a consumat toate sedintele, dar are cel putin un `no_show`
-- `completed_clean` - clientul a consumat toate sedintele fara niciun `no_show`
+- `completed_successfully` - clientul a consumat toate sedintele fara niciun `no_show`
+- `completed_with_absences` - clientul a consumat toate sedintele, dar are cel putin un `no_show`
 
 ## Cerinta profesoarei
 

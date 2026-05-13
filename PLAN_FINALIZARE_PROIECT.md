@@ -3,7 +3,7 @@
 Acest document contine ordinea recomandata pentru verificarea si finalizarea
 proiectului refacut pe metoda `evaluate_client_package`.
 
-## 1. Verifica metoda principala
+## 1. [DONE] Verifica metoda principala
 
 Deschide `fitness_class_booking.py` si verifica metoda:
 
@@ -19,7 +19,7 @@ Verifica daca metoda are logica dorita:
 - `attended`;
 - `no_show`;
 - `cancelled`;
-- statusuri: `active`, `completed`, `completed_clean`.
+- statusuri: `active`, `completed_successfully`, `completed_with_absences`.
 
 Verifica explicit cerinta profesoarei:
 

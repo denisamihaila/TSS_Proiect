@@ -61,14 +61,14 @@ class TestBoundaryValueAnalysis(unittest.TestCase):
         self.assertEqual(result["remaining_sessions"], 1)
         self.assertEqual(result["status"], "active")
 
-    def test_bva_exact_completion_without_no_show_is_completed_clean(self) -> None:
+    def test_bva_exact_completion_without_no_show_is_completed_successfully(self) -> None:
         result = self.booking.evaluate_client_package(
             ["attended", "attended", "attended"], 3, False
         )
 
         self.assertEqual(result["used_sessions"], 3)
         self.assertEqual(result["remaining_sessions"], 0)
-        self.assertEqual(result["status"], "completed_clean")
+        self.assertEqual(result["status"], "completed_successfully")
 
     def test_bva_one_session_over_package_raises_value_error(self) -> None:
         with self.assertRaises(ValueError):

@@ -36,22 +36,22 @@ class TestEquivalencePartitioning(unittest.TestCase):
         self.assertEqual(result["total_cost"], 200.0)
         self.assertEqual(result["status"], "active")
 
-    def test_ep_completed_clean_when_all_sessions_attended(self) -> None:
+    def test_ep_completed_successfully_when_all_sessions_attended(self) -> None:
         result = self.booking.evaluate_client_package(
             ["attended", "attended", "attended"], 3, False
         )
 
         self.assertEqual(result["remaining_sessions"], 0)
-        self.assertEqual(result["status"], "completed_clean")
+        self.assertEqual(result["status"], "completed_successfully")
 
-    def test_ep_completed_when_package_finished_with_no_show(self) -> None:
+    def test_ep_completed_with_absences_when_package_finished_with_no_show(self) -> None:
         result = self.booking.evaluate_client_package(
             ["attended", "no_show"], 2, False
         )
 
         self.assertEqual(result["used_sessions"], 2)
         self.assertEqual(result["remaining_sessions"], 0)
-        self.assertEqual(result["status"], "completed")
+        self.assertEqual(result["status"], "completed_with_absences")
 
     def test_ep_invalid_session_history_type_raises_value_error(self) -> None:
         with self.assertRaises(ValueError):

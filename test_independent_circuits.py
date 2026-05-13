@@ -37,18 +37,18 @@ class TestIndependentCircuitsEvaluateClientPackage(unittest.TestCase):
         with self.assertRaises(ValueError):
             make_booking().evaluate_client_package(["attended", "late"], 4, False)
 
-    def test_path4_attended_sessions_complete_clean_package(self) -> None:
+    def test_path4_attended_sessions_complete_package_successfully(self) -> None:
         result = make_booking().evaluate_client_package(
             ["attended", "attended"], 2, False
         )
 
-        self.assertEqual(result["status"], "completed_clean")
+        self.assertEqual(result["status"], "completed_successfully")
 
-    def test_path5_no_show_consumes_session_and_completes_package(self) -> None:
+    def test_path5_no_show_consumes_session_and_completes_package_with_absences(self) -> None:
         result = make_booking().evaluate_client_package(["no_show"], 1, False)
 
         self.assertEqual(result["used_sessions"], 1)
-        self.assertEqual(result["status"], "completed")
+        self.assertEqual(result["status"], "completed_with_absences")
 
     def test_path6_cancelled_session_does_not_consume_package(self) -> None:
         result = make_booking().evaluate_client_package(["cancelled"], 1, False)
