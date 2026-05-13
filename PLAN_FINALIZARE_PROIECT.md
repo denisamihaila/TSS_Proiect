@@ -30,7 +30,7 @@ Verifica explicit cerinta profesoarei:
 - conditie simpla: `if has_membership`;
 - conditie compusa: `if remaining_sessions == 0 and no_show == 0`.
 
-## 2. Ruleaza testele
+## 2. [DONE] Ruleaza testele
 
 Din folderul proiectului:
 
