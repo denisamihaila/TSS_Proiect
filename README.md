@@ -1,21 +1,21 @@
 # TSS T1 - Testare unitară în Python
 
-Proiect realizat pentru disciplina **Testarea Sistemelor Software**, tema
+Lucrare realizată pentru disciplina **Testarea Sistemelor Software**, tema
 **T1 - Testare unitară în Python**.
 
-Proiectul testează clasa `FitnessClassBooking`, care modelează evaluarea unui
-pachet de ședințe pentru o clasă de fitness. Funcționalitatea principală este
-metoda:
+Obiectul testării este clasa `FitnessClassBooking`, care modelează evaluarea
+unui pachet de ședințe pentru o clasă de fitness. Funcționalitatea principală
+analizată este metoda:
 
 ```python
 evaluate_client_package(session_history, package_sessions, has_membership)
 ```
 
-Documentația de față este documentația completă a proiectului. Ea include
-cerința, descrierea clasei, strategiile de testare, diagramele, configurația
+Acest fișier constituie documentația completă a proiectului. Sunt prezentate
+cerința, modelul funcțional, strategiile de testare, diagramele, configurația
 hardware/software, comenzile de rulare, rezultatele obținute, interpretarea
-tool-urilor și comparația dintre suita proprie de teste și suita generată cu
-ajutorul AI.
+instrumentelor utilizate și comparația dintre suita proprie de teste și suita
+generată/asistată cu ajutorul unui instrument AI.
 
 ## 1. Cerința proiectului
 
@@ -531,6 +531,7 @@ Capturile finale sunt în folderul `screenshots/`:
 | `04_coverage_html_generated.png` | generarea raportului HTML coverage |
 | `05_mutmut_run.png` | sumar mutmut: `95` mutanți, `80 killed`, `15 suspicious`, `0 survived` |
 | `06_mutmut_results.png` | lista mutanților `Suspicious` raportați de mutmut |
+| `07_pytest_ai_70_passed.png` | rulare `python -m pytest -q teste_ai` cu `70 passed` |
 
 Output-urile text sunt în folderul `logs/`:
 
@@ -540,25 +541,30 @@ Output-urile text sunt în folderul `logs/`:
 | `logs/coverage_report.txt` | raport coverage |
 | `logs/mutmut_results.txt` | output mutmut run + results |
 
-## 14. Utilizarea AI în proiect
+## 14. Utilizarea unui instrument AI în proiect
 
-În proiect a fost folosit ChatGPT/Codex ca instrument AI de asistare în timpul
-testării software [8]. AI-ul a fost folosit pentru:
+În etapa de analiză și extindere a testelor a fost utilizat ChatGPT/Codex ca
+instrument de asistență pentru testarea software [8]. Utilizarea acestuia a
+vizat activități de verificare și comparare, nu înlocuirea procesului de
+validare. Concret, instrumentul a fost folosit pentru:
 
-- analiza suitei proprii de teste;
-- identificarea cazurilor lipsă;
+- revizuirea suitei proprii de teste;
+- identificarea unor cazuri-limită sau ramuri insuficient evidențiate;
 - propunerea unor teste suplimentare;
-- construirea unei suite separate în `teste_ai/`;
-- compararea suitei proprii cu suita generată/asistată de AI;
-- explicarea rezultatelor din coverage și mutation testing.
+- construirea unei suite independente în folderul `teste_ai/`;
+- compararea suitei proprii cu suita generată/asistată;
+- formularea interpretării rezultatelor obținute prin coverage și mutation
+  testing.
 
-AI-ul nu a fost folosit ca înlocuitor pentru validare. Fiecare modificare
-propusă a fost verificată prin rularea testelor.
+Propunerile obținute prin AI au fost păstrate numai după verificare locală.
+Validarea finală a fost făcută prin rularea testelor, nu prin acceptarea
+automată a răspunsurilor generate.
 
 ### 14.1 Prompturi reprezentative
 
-Prompturile de mai jos sunt variante sintetizate ale solicitărilor folosite în
-lucru:
+Prompturile de mai jos sunt reformulări sintetice ale solicitărilor folosite în
+timpul lucrului. Ele descriu tipul de cerințe transmise instrumentului AI, nu un
+transcript complet al interacțiunii:
 
 1. `Analizează proiectul FitnessClassBooking și verifică dacă testele acoperă toate ramurile, condițiile și cazurile invalide.`
 2. `Completează test_coverage.py cu testele lipsă, păstrând stilul fișierului.`
@@ -596,15 +602,15 @@ Rezultat:
 | --- | --- | --- |
 | Număr teste | 99 | 70 |
 | Organizare | pe tehnici de testare | pe scenarii, validări, limite și proprietăți |
-| Stil | explicit, didactic, ușor de corelat cu cerința | compact, parametrizat, mai apropiat de testele generate |
+| Stil | explicit, didactic, ușor de corelat cu cerința | compact, parametrizat, orientat pe scenarii |
 | Scop | demonstrarea strategiilor cerute la curs | perspectivă suplimentară și scenarii alternative |
 | Coverage | 100% pe `fitness_class_booking.py` | confirmă comportamentul, dar este rulată separat |
 | Mutation focus | fișier dedicat `test_mutation.py` | teste suplimentare pentru egalitate de stringuri, bool și proprietăți |
 
 ### 14.4 Studiu de caz: `bool` față de `int`
 
-AI-ul a evidențiat că în Python `bool` este subclasă de `int` [5]. De aceea,
-testele verifică explicit că:
+Analiza asistată a evidențiat un detaliu specific limbajului Python: `bool`
+este subclasă de `int` [5]. Din acest motiv, testele verifică explicit că:
 
 - `price_per_session=False` este invalid;
 - `package_sessions=True` este invalid;
@@ -626,18 +632,19 @@ Acesta construiește statusurile prin operații de string și verifică faptul c
 metoda le compară prin valoare, nu prin identitate. Testul este util pentru
 mutanți care ar înlocui `==` cu `is`.
 
-### 14.6 Concluzie despre AI
+### 14.6 Concluzie privind utilizarea AI
 
-AI-ul a fost util mai ales pentru:
+Contribuția instrumentului AI a fost relevantă în special pentru:
 
-- observarea unor edge case-uri specifice limbajului Python;
-- generarea rapidă de variante alternative de teste;
-- propunerea unor teste orientate pe mutații;
-- formularea unor interpretări pentru rezultate.
+- identificarea unor cazuri specifice limbajului Python;
+- obținerea unei perspective independente asupra suitei de teste;
+- generarea unor teste orientate pe mutații;
+- structurarea comparației dintre suita proprie și suita AI.
 
-Limitarea principală este că AI-ul poate presupune detalii inexistente dacă nu
-primește context complet. De aceea, în proiect au fost păstrate doar propunerile
-care au trecut testele și care corespund codului real.
+Limitarea principală observată este dependența de contextul furnizat. Dacă
+promptul este incomplet, instrumentul poate presupune detalii care nu există în
+implementarea reală. Din acest motiv, documentația și testele finale includ doar
+informații confirmate prin cod și prin rulări locale.
 
 ## 15. Materiale pentru predare
 
@@ -653,13 +660,12 @@ Materialele importante pentru predare sunt:
 - folderul `cosmic_ray/` - artefacte pentru analiza Cosmic Ray;
 - `cfg_diagrama.drawio.png` și `cause_effect_graph.png` - diagramele finale.
 
-Fișierul `RAPORT_TSS.md` nu este necesar pentru predare; informațiile relevante
-au fost integrate în acest README.
-
 ## 16. Concluzie
 
-Proiectul respectă cerința temei T1 deoarece testează o clasă Python cu o suită
-unitară completă și aplică strategiile principale de testare funcțională și
+Proiectul respectă cerința temei T1 prin testarea unei clase Python cu o suită
+unitară organizată pe tehnicile studiate la curs și la laborator. Funcționalitatea
+aleasă are un domeniu redus, dar include validări, ramuri și rezultate suficient
+de variate pentru a demonstra atât testarea funcțională, cât și testarea
 structurală.
 
 Rezultatele finale sunt:
@@ -671,10 +677,10 @@ Rezultatele finale sunt:
 - `0` mutanți supraviețuitori în `mutmut`;
 - scor aproximativ de omorâre a mutanților de `94.58%` în Cosmic Ray.
 
-Metoda `evaluate_client_package` este suficient de mică pentru a fi înțeleasă
-ușor, dar suficient de bogată pentru a demonstra toate tehnicile cerute:
-validări, buclă, condiții simple și compuse, ramuri multiple, valori de
-frontieră, circuite independente și mutation testing.
+Metoda `evaluate_client_package` permite verificarea coerentă a claselor de
+echivalență, a valorilor de frontieră, a acoperirii codului, a circuitelor
+independente și a comportamentului în fața mutațiilor. Rezultatele obținute
+indică o suită stabilă și bine focalizată pe contractul public al clasei.
 
 ## 17. Referințe bibliografice
 

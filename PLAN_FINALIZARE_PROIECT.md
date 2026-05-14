@@ -182,20 +182,20 @@ Verifica daca:
 - include cerinta profesoarei;
 - include comenzile de rulare;
 - include rezultatele finale;
-- mentioneaza raportul, prezentarea, logurile si CFG-ul.
+- mentioneaza prezentarea, logurile, capturile si diagramele.
 
-## 10. Verifica raportul
+## 10. [DONE] Verifica documentatia finala
 
-Deschide `RAPORT_TSS.md`.
+Documentatia finala este in `README.md`.
 
-Citeste-l ca document final si verifica:
+Citeste README-ul ca document final si verifica:
 
 - daca explicatia metodei este clara;
 - daca tabelele sunt corecte;
 - daca strategiile de testare sunt explicate;
 - daca rezultatele corespund rularilor locale.
 
-Din acest fisier poti construi raportul Word final.
+Nu mai este necesar un raport separat in Markdown.
 
 ## 11. Verifica prezentarea
 
@@ -204,20 +204,15 @@ Deschide `PREZENTARE_TSS.md`.
 Foloseste-l ca ordine pentru PowerPoint:
 
 1. Titlu
-2. Cerinta
-3. De ce ai refacut proiectul
-4. Functionalitatea aleasa
-5. Semnatura metodei
-6. Reguli de business
-7. Cerinta profesoarei bifata
-8. Testare functionala
-9. Valori de frontiera
-10. Testare structurala
-11. CFG
-12. Coverage
-13. Mutmut + Cosmic Ray
-14. Rezultate finale
-15. Concluzie
+2. Cerinta si alegerea functionalitatii
+3. Modelul de business
+4. Structura metodei si validari
+5. Testare functionala
+6. Testare structurala si diagrame
+7. Coverage
+8. Mutmut + Cosmic Ray
+9. Suita AI si comparatia
+10. Rezultate finale si concluzie
 
 ## 12. [DONE] Verifica diagramele
 
@@ -228,8 +223,8 @@ cfg_diagrama.drawio.png
 cause_effect_graph.png
 ```
 
-Daca arata bine, foloseste-le in raport si in PowerPoint. Daca diagrama CFG
-pare prea incarcata pentru slide, pune versiunea completa in raport si
+Daca arata bine, foloseste-le in README si in PowerPoint. Daca diagrama CFG
+pare prea incarcata pentru slide, pune versiunea completa in README si
 foloseste in prezentare doar o varianta simplificata verbal.
 
 ## 13. [DONE] Refa capturile
@@ -251,6 +246,7 @@ Capturile finale realizate:
 4. `04_coverage_html_generated.png`
 5. `05_mutmut_run.png`
 6. `06_mutmut_results.png`
+7. `07_pytest_ai_70_passed.png`
 
 Pune capturile noi in folderul:
 
@@ -258,15 +254,15 @@ Pune capturile noi in folderul:
 screenshots/
 ```
 
-## 14. Refa Word si PowerPoint
+## 14. [DONE] Finalizeaza README si PowerPoint
 
 Ordine recomandata:
 
-1. transforma `RAPORT_TSS.md` in raport Word;
-2. transforma `PREZENTARE_TSS.md` in PowerPoint;
+1. pastreaza documentatia completa in `README.md`;
+2. transforma `PREZENTARE_TSS.md` in PowerPoint de 10 slide-uri;
 3. adauga capturile noi;
 4. adauga diagramele `cfg_diagrama.drawio.png` si `cause_effect_graph.png`;
-5. sterge orice urma din metodele vechi.
+5. sterge orice urma din metodele vechi sau din raportul separat.
 
 ## 15. Ultima verificare inainte de predare
 
