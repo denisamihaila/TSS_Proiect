@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+htmlcov/
+.coverage
+.mutmut-cache
+
+# IDE
+.vscode/
+.idea/
+.claude/
+
+# Cosmic Ray local artifacts
+.venv/
+*.sqlite
+cosmic-ray-report.html

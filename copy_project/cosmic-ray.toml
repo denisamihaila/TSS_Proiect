@@ -1,0 +1,8 @@
+[cosmic-ray]
+module-path = "fitness_class_booking.py"
+timeout = 10.0
+excluded-modules = []
+test-command = './.venv/Scripts/python.exe -m pytest -q test_equivalence_partitioning.py test_boundary_value_analysis.py test_coverage.py test_independent_circuits.py test_mutation.py teste_ai'
+
+[cosmic-ray.distributor]
+name = "local"
