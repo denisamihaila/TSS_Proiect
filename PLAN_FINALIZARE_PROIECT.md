@@ -98,7 +98,7 @@ Uita-te in special la testele pentru:
 Acestea sunt bune de mentionat la prezentare, deoarece arata de ce au fost
 adaugate teste suplimentare.
 
-## 6. Ruleaza coverage
+## 6. [DONE] Ruleaza coverage
 
 Ruleaza:
 
@@ -125,7 +125,7 @@ Verifica apoi:
 htmlcov/index.html
 ```
 
-## 7. Ruleaza mutmut in WSL
+## 7. [DONE] Ruleaza mutmut in WSL
 
 In WSL, din folderul proiectului:
 
@@ -199,7 +199,7 @@ Foloseste-l ca ordine pentru PowerPoint:
 14. Rezultate finale
 15. Concluzie
 
-## 11. Verifica diagrama CFG
+## 11. [DONE] Verifica diagrama CFG
 
 Deschide:
 
@@ -211,7 +211,7 @@ Daca arata bine, foloseste-o in raport si in PowerPoint. Daca pare prea
 incarcata pentru slide, pune versiunea completa in raport si foloseste in
 prezentare doar o varianta simplificata verbal.
 
-## 12. Refa capturile
+## 12. [DONE] Refa capturile
 
 Dupa ce totul este verificat, fa capturi noi pentru:
 
