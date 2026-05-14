@@ -151,7 +151,27 @@ Se poate verifica si logul deja generat:
 logs/mutmut_results.txt
 ```
 
-## 8. Verifica README-ul
+## 8. [DONE] Verifica Cosmic Ray
+
+Artefactele Cosmic Ray sunt pastrate in:
+
+```text
+cosmic_ray/
+```
+
+Rezultatul documentat:
+
+```text
+Mutanti generati/finalizati: 166
+Mutanti supravietuitori: 9
+Rata supravietuire: 5.42%
+Scor aproximativ omorare mutanti: 94.58%
+```
+
+Copia completa `copy_project/` nu trebuie pastrata in proiectul final,
+deoarece contine teste duplicate si poate strica rularea implicita `pytest`.
+
+## 9. Verifica README-ul
 
 Deschide `README.md` si citeste-l cap-coada.
 
@@ -164,7 +184,7 @@ Verifica daca:
 - include rezultatele finale;
 - mentioneaza raportul, prezentarea, logurile si CFG-ul.
 
-## 9. Verifica raportul
+## 10. Verifica raportul
 
 Deschide `RAPORT_TSS.md`.
 
@@ -177,7 +197,7 @@ Citeste-l ca document final si verifica:
 
 Din acest fisier poti construi raportul Word final.
 
-## 10. Verifica prezentarea
+## 11. Verifica prezentarea
 
 Deschide `PREZENTARE_TSS.md`.
 
@@ -195,23 +215,24 @@ Foloseste-l ca ordine pentru PowerPoint:
 10. Testare structurala
 11. CFG
 12. Coverage
-13. Mutmut
+13. Mutmut + Cosmic Ray
 14. Rezultate finale
 15. Concluzie
 
-## 11. [DONE] Verifica diagrama CFG
+## 12. [DONE] Verifica diagramele
 
 Deschide:
 
 ```text
-evaluate_client_package_cfg.drawio.png
+cfg_diagrama.drawio.png
+cause_effect_graph.png
 ```
 
-Daca arata bine, foloseste-o in raport si in PowerPoint. Daca pare prea
-incarcata pentru slide, pune versiunea completa in raport si foloseste in
-prezentare doar o varianta simplificata verbal.
+Daca arata bine, foloseste-le in raport si in PowerPoint. Daca diagrama CFG
+pare prea incarcata pentru slide, pune versiunea completa in raport si
+foloseste in prezentare doar o varianta simplificata verbal.
 
-## 12. [DONE] Refa capturile
+## 13. [DONE] Refa capturile
 
 Dupa ce totul este verificat, fa capturi noi pentru:
 
@@ -237,17 +258,17 @@ Pune capturile noi in folderul:
 screenshots/
 ```
 
-## 13. Refa Word si PowerPoint
+## 14. Refa Word si PowerPoint
 
 Ordine recomandata:
 
 1. transforma `RAPORT_TSS.md` in raport Word;
 2. transforma `PREZENTARE_TSS.md` in PowerPoint;
 3. adauga capturile noi;
-4. adauga diagrama CFG;
+4. adauga diagramele `cfg_diagrama.drawio.png` si `cause_effect_graph.png`;
 5. sterge orice urma din metodele vechi.
 
-## 14. Ultima verificare inainte de predare
+## 15. Ultima verificare inainte de predare
 
 Ruleaza:
 
@@ -276,5 +297,5 @@ au fost eliminate. Nu ar trebui sa apara in codul principal sau in teste.
 ## Ordinea scurta
 
 ```text
-cod -> teste -> coverage -> mutmut -> README -> raport -> prezentare -> capturi -> verificare finala
+cod -> teste -> coverage -> mutmut -> cosmic ray -> README -> raport -> prezentare -> capturi -> verificare finala
 ```

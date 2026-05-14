@@ -3,9 +3,10 @@
 Proiect realizat pentru tema **T1 - Testare unitara in Python** la materia
 Testarea Sistemelor Software.
 
-Proiectul foloseste `unittest`, `pytest`, `coverage.py` si `mutmut` pentru
-testarea unei clase Python. Domeniul ales este o clasa de fitness, iar
-functionalitatea principala testata este metoda:
+Proiectul foloseste `unittest`, `pytest`, `coverage.py`, `mutmut` si, ca
+analiza suplimentara, `Cosmic Ray` pentru testarea unei clase Python. Domeniul
+ales este o clasa de fitness, iar functionalitatea principala testata este
+metoda:
 
 ```python
 evaluate_client_package(session_history, package_sessions, has_membership)
@@ -137,30 +138,37 @@ fitness_class_booking.py      43      0     26      0   100%
 TOTAL                         43      0     26      0   100%
 ```
 
-## Diagrama CFG
+## Diagrame
 
-Diagrama de flux de control pentru metoda testata este disponibila in doua
-formate:
+Proiectul include doua diagrame generate cu tool-uri dedicate:
 
-- `evaluate_client_package_cfg.drawio.svg`
-- `evaluate_client_package_cfg.drawio.png`
+- `cfg_diagrama.drawio.png` - diagrama CFG pentru metoda
+  `evaluate_client_package`;
+- `cause_effect_graph.png` - graful cauza-efect pentru regulile de business
+  ale metodei.
 
-Diagrama descrie fluxul metodei `evaluate_client_package`, inclusiv validarea
-parametrilor, bucla prin `session_history`, calculul costului si stabilirea
-statusului final.
+Diagrama CFG descrie validarea parametrilor, bucla prin `session_history`,
+calculul costului si stabilirea statusului final.
 
 ## Rulare
 
 Instalare dependente:
 
 ```bash
-python -m pip install pytest coverage "mutmut<3"
+python -m pip install pytest coverage "mutmut<3" cosmic-ray
 ```
 
 Rulare rapida a suitei:
 
 ```bash
 python -m pytest -q
+```
+
+Configuratia `pytest.ini` limiteaza rularea implicita la suita principala de
+99 de teste. Testele AI pot fi rulate separat:
+
+```bash
+python -m pytest -q teste_ai
 ```
 
 Rulare doar fisierele folosite in proiect:
@@ -237,6 +245,27 @@ Categoria `Suspicious` inseamna ca testele au rulat mai lent pentru acei
 mutanti, dar nu suficient de lent pentru a fi incadrati la `Timeout`. Mutmut nu
 a raportat mutanti in categoria `Survived`.
 
+## Cosmic Ray
+
+Cosmic Ray a fost folosit ca analiza suplimentara de mutation testing.
+Artefactele relevante sunt pastrate in folderul `cosmic_ray/`; copia completa
+a proiectului nu este necesara.
+
+Rezultat Cosmic Ray:
+
+```text
+Mutanti generati/finalizati: 166
+Mutanti supravietuitori: 9
+Rata supravietuire: 5.42%
+Scor aproximativ omorare mutanti: 94.58%
+```
+
+Mutantii supravietuitori sunt documentati in
+`cosmic_ray/cosmic-ray-survivors.txt`. O parte dintre acestia sunt probabil
+echivalenti sau foarte apropiati de comportamentul original, de exemplu
+comparatii mutate in variante care nu schimba rezultatul pentru domeniul valid
+al metodei.
+
 ## Capturi De Ecran
 
 Capturile finale sunt in folderul `screenshots/`:
@@ -254,7 +283,9 @@ Capturile finale sunt in folderul `screenshots/`:
 
 - `RAPORT_TSS.md` - raport scris pentru proiect;
 - `PREZENTARE_TSS.md` - schelet de prezentare;
-- `evaluate_client_package_cfg.drawio.svg` si `.png` - diagrama CFG;
+- `cfg_diagrama.drawio.png` - diagrama CFG;
+- `cause_effect_graph.png` - graful cauza-efect;
+- `cosmic_ray/` - artefactele Cosmic Ray;
 - `logs/` - output-uri pentru pytest, coverage si mutmut;
 - `screenshots/` - loc pentru capturile finale ale comenzilor.
 
@@ -272,8 +303,9 @@ TSS_Proiect/
 |-- test_coverage.py
 |-- test_independent_circuits.py
 |-- test_mutation.py
-|-- evaluate_client_package_cfg.drawio.svg
-|-- evaluate_client_package_cfg.drawio.png
+|-- cfg_diagrama.drawio.png
+|-- cause_effect_graph.png
+|-- cosmic_ray/
 |-- RAPORT_TSS.md
 |-- PREZENTARE_TSS.md
 |-- logs/

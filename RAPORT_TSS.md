@@ -126,10 +126,11 @@ Decizii principale:
 | D6 | `has_membership` |
 | D7 | `remaining_sessions == 0 and no_show == 0` |
 
-Diagrama CFG noua:
+Diagrame incluse in proiect:
 
-- `evaluate_client_package_cfg.drawio.svg`
-- `evaluate_client_package_cfg.drawio.png`
+- `cfg_diagrama.drawio.png` - diagrama CFG pentru metoda
+  `evaluate_client_package`;
+- `cause_effect_graph.png` - graful cauza-efect pentru regulile de business.
 
 Teste:
 
@@ -170,7 +171,24 @@ neechivalenti relevanti:
 - eliminarea/alterarea discountului de membership;
 - schimbarea rotunjirii costului.
 
-## 8. Rezultate finale
+## 8. Analiza suplimentara Cosmic Ray
+
+Ca analiza suplimentara, a fost rulat si Cosmic Ray. Artefactele rezultate sunt
+pastrate in folderul `cosmic_ray/`.
+
+Rezultat Cosmic Ray:
+
+- mutanti generati/finalizati: 166;
+- mutanti supravietuitori: 9;
+- rata supravietuire: 5.42%;
+- scor aproximativ de omorare a mutantilor: 94.58%.
+
+Mutantii supravietuitori Cosmic Ray sunt listati in
+`cosmic_ray/cosmic-ray-survivors.txt`. O parte dintre acestia sunt probabil
+echivalenti sau foarte apropiati de comportamentul original, de exemplu
+comparatii care nu schimba rezultatul pentru domeniul valid al metodei.
+
+## 9. Rezultate finale
 
 Comenzi rulate:
 
@@ -193,7 +211,7 @@ Rezultate:
 Output-urile comenzilor sunt salvate in `logs/`, iar capturile finale sunt in
 `screenshots/`.
 
-## 9. Concluzie
+## 10. Concluzie
 
 Versiunea refacuta este mai focalizata decat varianta initiala: in loc de mai
 multe metode si foarte multe teste distribuite pe functionalitati diferite,

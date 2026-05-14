@@ -93,10 +93,10 @@ Au fost urmarite:
 
 ## Slide 11 - CFG
 
-Diagrama CFG:
+Diagrame:
 
-- `evaluate_client_package_cfg.drawio.png`
-- `evaluate_client_package_cfg.drawio.svg`
+- `cfg_diagrama.drawio.png` - CFG;
+- `cause_effect_graph.png` - cauza-efect.
 
 Decizii principale:
 
@@ -137,6 +137,12 @@ Teste suplimentare:
 - rotunjire cost;
 - mesaje publice de eroare.
 
+Cosmic Ray, analiza suplimentara:
+
+- 166 mutanti finalizati;
+- 9 mutanti supravietuitori;
+- scor aproximativ omorare mutanti: 94.58%.
+
 ## Slide 14 - Rezultate finale
 
 - 99 teste;
@@ -145,6 +151,7 @@ Teste suplimentare:
 - 43 statements, 0 missing;
 - 26 branches, 0 partial;
 - 0 mutanti supravietuitori;
+- Cosmic Ray folosit ca analiza suplimentara;
 - capturi finale disponibile in `screenshots/`;
 - proiect mai simplu si mai usor de prezentat.
 
