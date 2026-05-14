@@ -1,162 +1,180 @@
-# Prezentare TSS - FitnessClassBooking
+# Plan prezentare TSS - 10 slide-uri
 
-## Slide 1 - Titlu
+Prezentarea PowerPoint trebuie să fie un rezumat al documentației din
+`README.md`. Fiecare slide are rolul de a susține oral proiectul, nu de a copia
+integral documentația.
 
-T1 Testare unitara in Python  
-Clasa: `FitnessClassBooking`  
-Metoda testata: `evaluate_client_package`
+## Slide 1 - Titlu și context
 
-## Slide 2 - Cerinta proiectului
+**Titlu:** TSS T1 - Testare unitară în Python  
+**Proiect:** FitnessClassBooking  
+**Funcționalitate testată:** evaluarea unui pachet de ședințe fitness
 
-- testarea unei clase Python cu framework de testare unitara;
-- aplicarea strategiilor de testare functionala si structurala;
-- cerinta suplimentara: metoda cu minim 3 parametri, bucla, doua conditionale,
-  conditie simpla si conditie compusa.
+Conținut recomandat:
 
-## Slide 3 - De ce am refacut proiectul
+- disciplina: Testarea Sistemelor Software;
+- tema: T1 - testare unitară în Python;
+- clasa testată: `FitnessClassBooking`;
+- metoda principală: `evaluate_client_package`.
 
-- varianta initiala avea prea multe metode testate separat;
-- noua varianta se concentreaza pe o singura functionalitate;
-- metoda noua este realista pentru o aplicatie de fitness.
+## Slide 2 - Cerință și alegerea funcționalității
 
-## Slide 4 - Functionalitatea aleasa
+Conținut recomandat:
 
-Metoda evalueaza pachetul de sedinte al unui client.
+- framework de testare unitară în Python: `pytest`;
+- strategii cerute: echivalență, frontiere, coverage, circuite independente,
+  mutation testing;
+- metoda are 3 parametri, buclă, `if` cu `else`, `if` fără `else`, condiție
+  simplă și condiție compusă;
+- domeniu ales: pachet de ședințe pentru o clasă de fitness.
 
-Statusuri:
+Mesaj oral:
 
-- `attended`: sedinta consumata;
-- `no_show`: sedinta consumata;
-- `cancelled`: sedinta neconsumata.
+- proiectul este concentrat pe o singură metodă, dar metoda este suficient de
+  complexă pentru toate strategiile.
 
-## Slide 5 - Semnatura metodei
+## Slide 3 - Modelul de business
+
+Conținut recomandat:
+
+- statusuri în istoric:
+  - `attended` consumă ședință;
+  - `no_show` consumă ședință;
+  - `cancelled` nu consumă ședință;
+- membership-ul aplică reducere de `20%`;
+- status final:
+  - `active`;
+  - `completed_successfully`;
+  - `completed_with_absences`.
+
+Element vizual:
+
+- tabel scurt cu cele trei statusuri și efectul fiecăruia.
+
+## Slide 4 - Structura metodei și validări
+
+Conținut recomandat:
+
+- semnătura metodei:
 
 ```python
 evaluate_client_package(session_history, package_sessions, has_membership)
 ```
 
-Parametri:
+- validări:
+  - `session_history` trebuie să fie listă;
+  - `package_sessions` trebuie să fie `int` între `1` și `20`;
+  - `has_membership` trebuie să fie `bool`;
+  - fiecare status trebuie să fie valid;
+  - consumul nu poate depăși pachetul.
 
-- `session_history`;
-- `package_sessions`;
-- `has_membership`.
+Mesaj oral:
 
-## Slide 6 - Reguli de business
+- `bool` este tratat separat deoarece în Python este subclasă de `int`.
 
-- `attended` si `no_show` consuma sedinte;
-- `cancelled` nu consuma sedinte;
-- membership aplica reducere de 20%;
-- statusul poate fi `active`, `completed_successfully`,
-  `completed_with_absences`.
+## Slide 5 - Testare funcțională
 
-## Slide 7 - Cerinta profesoarei bifata
+Conținut recomandat:
 
-| Cerinta | Implementare |
-| --- | --- |
-| 3 parametri | `session_history`, `package_sessions`, `has_membership` |
-| bucla | `for session_status in session_history` |
-| if cu else | statusul `attended` vs celelalte |
-| if fara else | `if has_membership` |
-| conditie simpla | `has_membership` |
-| conditie compusa | `remaining_sessions == 0 and no_show == 0` |
+- `test_equivalence_partitioning.py`: 22 teste;
+- `test_boundary_value_analysis.py`: 16 teste;
+- clase valide: istoric gol, istoric mixt, pachet finalizat, membership;
+- clase invalide: tipuri greșite, status necunoscut, consum peste pachet;
+- frontiere: `0`, `1`, `2`, `19`, `20`, `21`.
 
-## Slide 8 - Testare functionala
+Element vizual:
 
-Partitionare in clase de echivalenta:
+- tabel cu fișierele și numărul de teste.
 
-- istoric valid gol;
-- istoric valid mixt;
-- pachet finalizat cu succes;
-- pachet finalizat cu absente;
-- tipuri invalide;
-- status invalid;
-- sedinte consumate peste pachet.
+## Slide 6 - Testare structurală și diagrame
 
-## Slide 9 - Valori de frontiera
+Conținut recomandat:
 
-Frontiere testate:
+- `test_coverage.py`: 40 teste;
+- `test_independent_circuits.py`: 10 teste;
+- acoperire urmărită: instrucțiune, decizie, condiție;
+- circuite independente pentru drumurile principale;
+- diagrame:
+  - `cfg_diagrama.drawio.png`;
+  - `cause_effect_graph.png`.
 
-- `package_sessions = 0`, `1`, `2`;
-- `package_sessions = 19`, `20`, `21`;
-- o sedinta inainte de finalizare;
-- exact la finalizare;
-- peste limita pachetului.
+Element vizual:
 
-## Slide 10 - Testare structurala
+- diagrama CFG sau un crop/rezumat al acesteia.
 
-Au fost urmarite:
+## Slide 7 - Coverage: rezultat 100%
 
-- statement coverage;
-- decision coverage;
-- condition coverage;
-- circuite independente.
+Conținut recomandat:
 
-## Slide 11 - CFG
+- comandă:
 
-Diagrame:
-
-- `cfg_diagrama.drawio.png` - CFG;
-- `cause_effect_graph.png` - cauza-efect.
-
-Decizii principale:
-
-- validarea parametrilor;
-- validarea statusului;
-- ramura `attended`;
-- verificarea depasirii pachetului;
-- membership;
-- status final cu succes.
-
-## Slide 12 - Coverage
-
-Rezultat:
-
-```text
-fitness_class_booking.py: 100%
-43 statements, 0 missing
-26 branches, 0 partial
+```bash
+python -m coverage report -m --include="fitness_class_booking.py"
 ```
 
-## Slide 13 - Mutmut
+- rezultat:
+  - `43` statements;
+  - `0` missing;
+  - `26` branches;
+  - `0` partial branches;
+  - `100%` coverage.
 
-Rezultat:
+Mesaj oral:
 
-- 95 mutanti verificati;
-- 80 mutanti omorati;
-- 0 mutanti supravietuitori;
-- 15 mutanti suspiciosi;
-- 0 timeout, 0 skipped.
+- coverage-ul arată că toate instrucțiunile și ramurile au fost executate, dar
+  de aceea a fost folosit și mutation testing.
 
-Teste suplimentare:
+## Slide 8 - Mutation testing: mutmut și Cosmic Ray
 
-- multiple `attended`;
-- multiple `no_show`;
-- multiple `cancelled`;
-- cost calculat pe pachetul complet;
-- discount membership;
-- rotunjire cost;
-- mesaje publice de eroare.
+Conținut recomandat:
 
-Cosmic Ray, analiza suplimentara:
+- `test_mutation.py`: 11 teste;
+- `mutmut`:
+  - `95/95` mutanți verificați;
+  - `80` killed;
+  - `15` suspicious;
+  - `0` survived;
+- Cosmic Ray:
+  - `166` mutanți finalizați;
+  - `9` survived;
+  - scor aproximativ `94.58%`.
 
-- 166 mutanti finalizati;
-- 9 mutanti supravietuitori;
-- scor aproximativ omorare mutanti: 94.58%.
+Mesaj oral:
 
-## Slide 14 - Rezultate finale
+- `Suspicious` în mutmut nu înseamnă `Survived`;
+- Cosmic Ray folosește operatori diferiți și oferă o perspectivă suplimentară.
 
-- 99 teste;
-- toate trec;
-- 100% coverage pe fisierul principal;
-- 43 statements, 0 missing;
-- 26 branches, 0 partial;
-- 0 mutanti supravietuitori;
-- Cosmic Ray folosit ca analiza suplimentara;
-- capturi finale disponibile in `screenshots/`;
-- proiect mai simplu si mai usor de prezentat.
+## Slide 9 - Suita AI și comparația cu suita proprie
 
-## Slide 15 - Concluzie
+Conținut recomandat:
 
-Noua varianta este mai potrivita pentru cerinta: o singura metoda realista,
-suficient de complexa pentru toate strategiile de testare, dar fara sa incarce
-proiectul cu functionalitati secundare.
+- AI folosit: ChatGPT/Codex;
+- suita AI este separată în `teste_ai/`;
+- rezultat: `70 passed`;
+- comparație:
+  - suita proprie: 99 teste, organizată pe tehnici;
+  - suita AI: 70 teste, organizată pe scenarii și proprietăți;
+  - AI-ul a ajutat la cazuri precum `bool` vs `int` și string equality.
+
+Mesaj oral:
+
+- AI-ul a fost folosit ca instrument de analiză și completare, iar rezultatele
+  au fost validate prin rularea testelor.
+
+## Slide 10 - Rezultate finale și concluzie
+
+Conținut recomandat:
+
+- `99 passed` în suita principală;
+- `70 passed` în suita AI;
+- `100%` coverage pe `fitness_class_booking.py`;
+- `0` mutanți supraviețuitori în mutmut;
+- `94.58%` scor aproximativ Cosmic Ray;
+- documentația completă este în `README.md`;
+- proiectul este pregătit pentru demonstrația video.
+
+Mesaj final:
+
+- metoda este compactă, dar acoperă toate cerințele;
+- testele combină testare funcțională, structurală și mutation testing;
+- README-ul conține documentația completă și referințele.
