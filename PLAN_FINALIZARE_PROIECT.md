@@ -50,12 +50,12 @@ Pentru capturi mai detaliate:
 python -m pytest -v
 ```
 
-## 3. Verifica testele functionale
+## 3. [DONE] Verifica testele functionale
 
 Deschide in ordinea aceasta:
 
-1. [DONE] `test_equivalence_partitioning.py`
-2. [DONE] `test_boundary_value_analysis.py`
+1. `test_equivalence_partitioning.py`
+2. `test_boundary_value_analysis.py`
 
 Verifica exemplele principale:
 
@@ -66,7 +66,7 @@ Verifica exemplele principale:
 - valori invalide;
 - frontierele `0`, `1`, `2`, `19`, `20`, `21`.
 
-## 4. Verifica testele structurale
+## 4. [DONE] Verifica testele structurale
 
 Deschide:
 
@@ -83,7 +83,7 @@ Urmareste daca sunt acoperite:
 Nu este nevoie sa memorezi fiecare test, dar este bine sa poti explica 2-3
 exemple reprezentative.
 
-## 5. Verifica testele de mutatie
+## 5. [DONE] Verifica testele de mutatie
 
 Deschide `test_mutation.py`.
 
