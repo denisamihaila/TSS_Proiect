@@ -55,7 +55,7 @@ python -m pytest -v
 Deschide in ordinea aceasta:
 
 1. [DONE] `test_equivalence_partitioning.py`
-2. `test_boundary_value_analysis.py`
+2. [DONE] `test_boundary_value_analysis.py`
 
 Verifica exemplele principale:
 
