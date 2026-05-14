@@ -1,6 +1,7 @@
 class FitnessClassBooking:
     """
-    Evaluarea pachetului de sedinte al unui client.
+    Clasa folosita in proiectul TSS pentru evaluarea unui pachet de sedinte.
+    Metoda principala testata este evaluate_client_package.
     """
 
     # Valorile permise pentru tipul clasei de fitness si pentru statusurile din istoricul sedintelor
@@ -47,15 +48,19 @@ class FitnessClassBooking:
         has_membership: bool,
     ) -> dict:
         """
-        Evalueaza starea unui pachet de sedinte pentru un client
+        Evalueaza starea unui pachet de sedinte pentru un client.
 
         Statusuri acceptate in istoric:
         - attended: clientul a participat; sedinta se consuma
         - no_show: clientul nu a venit si nu a anuntat; sedinta se consuma
         - cancelled: clientul a anulat la timp; sedinta nu se consuma
+
+        Returneaza contoarele pentru istoric, sedintele consumate si ramase,
+        costul total al pachetului si statusul final al pachetului.
         """
-        # validarea generala a parametrilor metodei: numarul de sesiuni ale pachetului trebuie sa fie
-        # intre 1 si MAX_PACKAGE_SESSIONS, iar has_membership trebuie sa fie strict boolean
+        # validarea generala a parametrilor metodei: session_history trebuie sa fie lista,
+        # package_sessions trebuie sa fie int intre 1 si MAX_PACKAGE_SESSIONS,
+        # iar has_membership trebuie sa fie strict boolean
         if (
             not isinstance(session_history, list)
             or isinstance(package_sessions, bool)

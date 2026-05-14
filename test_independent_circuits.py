@@ -11,6 +11,10 @@ class TestIndependentCircuitsEvaluateClientPackage(unittest.TestCase):
     """
     Circuite independente pentru evaluate_client_package.
 
+    Sunt acoperite 10 cai reprezentative prin CFG: validare parametri,
+    istoric gol, status invalid, cele trei statusuri valide din istoric,
+    depasirea pachetului, membership si cele trei statusuri finale.
+
     Decizii principale urmarite:
     D1  validarea parametrilor metodei
     D2  validarea fiecarui status din session_history
@@ -71,6 +75,22 @@ class TestIndependentCircuitsEvaluateClientPackage(unittest.TestCase):
             make_booking().evaluate_client_package(
                 ["attended", "attended", "no_show"], 2, False
             )
+
+    def test_path9_attended_session_with_membership_keeps_package_active(self) -> None:
+        result = make_booking().evaluate_client_package(["attended"], 3, True)
+
+        self.assertEqual(result["used_sessions"], 1)
+        self.assertEqual(result["remaining_sessions"], 2)
+        self.assertEqual(result["total_cost"], 120.0)
+        self.assertEqual(result["status"], "active")
+
+    def test_path10_membership_package_completes_successfully(self) -> None:
+        result = make_booking().evaluate_client_package(["attended", "attended"], 2, True)
+
+        self.assertEqual(result["used_sessions"], 2)
+        self.assertEqual(result["remaining_sessions"], 0)
+        self.assertEqual(result["total_cost"], 80.0)
+        self.assertEqual(result["status"], "completed_successfully")
 
 
 if __name__ == "__main__":

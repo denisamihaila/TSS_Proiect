@@ -8,7 +8,12 @@ def make_booking(price_per_session: float = 50.0) -> FitnessClassBooking:
 
 
 class TestStatementCoverage(unittest.TestCase):
-    """Teste pentru acoperire la nivel de instructiune."""
+    """
+    Teste pentru acoperire la nivel de instructiune.
+
+    Sunt executate instructiunile principale din constructor si din
+    evaluate_client_package, inclusiv caile valide si caile cu ValueError.
+    """
 
     def test_sc_constructor_valid_assigns_fields(self) -> None:
         booking = FitnessClassBooking("pilates", "  Maria Pop  ", 30.0)
@@ -64,7 +69,12 @@ class TestStatementCoverage(unittest.TestCase):
 
 
 class TestDecisionCoverage(unittest.TestCase):
-    """Teste pentru acoperire la nivel de decizie."""
+    """
+    Teste pentru acoperire la nivel de decizie.
+
+    Fiecare decizie relevanta este exercitata cel putin o data pe ramura True
+    si cel putin o data pe ramura False.
+    """
 
     def test_dc_package_validation_true(self) -> None:
         with self.assertRaises(ValueError):
@@ -130,7 +140,28 @@ class TestDecisionCoverage(unittest.TestCase):
 
 
 class TestConditionCoverage(unittest.TestCase):
-    """Teste pentru conditii simple si compuse."""
+    """
+    Teste pentru conditii simple si compuse.
+
+    Sunt verificate conditii atomice din validarile constructorului, validarile
+    metodei, conditia simpla has_membership si conditia compusa pentru status.
+    """
+
+    def test_cc_constructor_class_name_non_string_true(self) -> None:
+        with self.assertRaises(ValueError):
+            FitnessClassBooking(123, "Ana Pop", 50.0)
+
+    def test_cc_constructor_instructor_non_string_true(self) -> None:
+        with self.assertRaises(ValueError):
+            FitnessClassBooking("yoga", None, 50.0)
+
+    def test_cc_constructor_price_bool_true(self) -> None:
+        with self.assertRaises(ValueError):
+            FitnessClassBooking("yoga", "Ana Pop", True)
+
+    def test_cc_constructor_price_non_number_true(self) -> None:
+        with self.assertRaises(ValueError):
+            FitnessClassBooking("yoga", "Ana Pop", "50")
 
     def test_cc_simple_condition_has_membership_true(self) -> None:
         result = make_booking().evaluate_client_package([], 1, True)
@@ -161,9 +192,25 @@ class TestConditionCoverage(unittest.TestCase):
         with self.assertRaises(ValueError):
             make_booking().evaluate_client_package([], True, False)
 
+    def test_cc_validation_condition_session_history_non_list_true(self) -> None:
+        with self.assertRaises(ValueError):
+            make_booking().evaluate_client_package("attended", 5, False)
+
+    def test_cc_validation_condition_package_non_int_true(self) -> None:
+        with self.assertRaises(ValueError):
+            make_booking().evaluate_client_package([], "5", False)
+
+    def test_cc_validation_condition_package_below_min_true(self) -> None:
+        with self.assertRaises(ValueError):
+            make_booking().evaluate_client_package([], 0, False)
+
     def test_cc_validation_condition_package_above_max_true(self) -> None:
         with self.assertRaises(ValueError):
             make_booking().evaluate_client_package([], 21, False)
+
+    def test_cc_validation_condition_membership_non_bool_true(self) -> None:
+        with self.assertRaises(ValueError):
+            make_booking().evaluate_client_package([], 5, "yes")
 
     def test_cc_session_status_condition_non_string_true(self) -> None:
         with self.assertRaises(ValueError):
