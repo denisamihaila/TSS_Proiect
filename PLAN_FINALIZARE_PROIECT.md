@@ -41,7 +41,7 @@ python -m pytest -q
 Rezultat asteptat:
 
 ```text
-66 passed
+99 passed
 ```
 
 Pentru capturi mai detaliate:
@@ -137,8 +137,12 @@ python -m mutmut results
 Rezultat asteptat:
 
 ```text
+95/95
+Killed: 80
+Timeout: 0
+Suspicious: 15
 Survived: 0
-Suspicious: 7
+Skipped: 0
 ```
 
 Se poate verifica si logul deja generat:
@@ -214,8 +218,18 @@ Dupa ce totul este verificat, fa capturi noi pentru:
 1. `python -m pytest -q`
 2. `python -m coverage run --branch -m pytest`
 3. `python -m coverage report -m --include="fitness_class_booking.py"`
-4. `mutmut run ...`
-5. `mutmut results`
+4. `python -m coverage html --include="fitness_class_booking.py"`
+5. `mutmut run ...`
+6. `mutmut results`
+
+Capturile finale realizate:
+
+1. `01_pytest_99_passed.png`
+2. `02_coverage_run_99_passed.png`
+3. `03_coverage_report_100_percent.png`
+4. `04_coverage_html_generated.png`
+5. `05_mutmut_run.png`
+6. `06_mutmut_results.png`
 
 Pune capturile noi in folderul:
 

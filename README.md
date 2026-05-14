@@ -210,7 +210,8 @@ RUN_MUTMUT=auto bash run_coverage.sh  # implicit
 ## Mutmut
 
 `mutmut` nu ruleaza nativ pe Windows in mediul curent; pentru analiza de
-mutatie se recomanda WSL.
+mutatie se recomanda WSL. Rularea finala a fost facuta in distributia
+`Ubuntu` din WSL.
 
 Comanda folosita:
 
@@ -221,8 +222,33 @@ python -m mutmut run --paths-to-mutate fitness_class_booking.py \
 python -m mutmut results
 ```
 
-Logul `logs/mutmut_results.txt` trebuie regenerat din WSL dupa stabilirea
-versiunii finale a testelor.
+Rezultat final:
+
+```text
+95/95 mutanti verificati
+Killed: 80
+Timeout: 0
+Suspicious: 15
+Survived: 0
+Skipped: 0
+```
+
+Categoria `Suspicious` inseamna ca testele au rulat mai lent pentru acei
+mutanti, dar nu suficient de lent pentru a fi incadrati la `Timeout`. Mutmut nu
+a raportat mutanti in categoria `Survived`.
+
+## Capturi De Ecran
+
+Capturile finale sunt in folderul `screenshots/`:
+
+| Fisier | Continut |
+| --- | --- |
+| `01_pytest_99_passed.png` | rulare `python -m pytest -q` cu `99 passed` |
+| `02_coverage_run_99_passed.png` | rulare coverage cu `99 passed` |
+| `03_coverage_report_100_percent.png` | raport coverage cu 100% pe `fitness_class_booking.py` |
+| `04_coverage_html_generated.png` | generarea raportului HTML coverage |
+| `05_mutmut_run.png` | sumar mutmut: 95 mutanti, 80 killed, 15 suspicious, 0 survived |
+| `06_mutmut_results.png` | lista mutantilor `Suspicious` raportati de mutmut |
 
 ## Materiale Pentru Predare
 

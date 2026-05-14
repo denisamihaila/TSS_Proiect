@@ -143,19 +143,30 @@ Mutmut a fost rulat in WSL cu runner explicit:
 ```bash
 python -m mutmut run --paths-to-mutate fitness_class_booking.py \
                      --tests-dir . \
-                     --runner "python -m pytest -q"
+                     --runner "python -m pytest -q test_equivalence_partitioning.py test_boundary_value_analysis.py test_coverage.py test_independent_circuits.py test_mutation.py"
+python -m mutmut results
 ```
 
 Rezultat final:
 
+- mutanti generati/verificati: 95;
+- mutanti omorati: 80;
+- mutanti cu timeout: 0;
+- mutanti suspiciosi: 15;
 - mutanti supravietuitori: 0;
-- mutanti suspiciosi: 7.
+- mutanti sariti: 0.
+
+Categoria `Suspicious` indica mutanti pentru care suita de teste a rulat mai
+lent decat timpul de baza, dar nu suficient de lent incat sa fie incadrati la
+`Timeout`. Mutmut nu a raportat niciun mutant in categoria `Survived`.
 
 Testele suplimentare din `test_mutation.py` omoara mutanti comportamentali
 neechivalenti relevanti:
 
+- schimbarea incrementarii `attended += 1` in `attended = 1`;
 - schimbarea incrementarii `no_show += 1` in `no_show = 1`;
 - schimbarea incrementarii `cancelled += 1` in `cancelled = 1`;
+- calcularea costului din sedintele consumate in loc de intregul pachet;
 - eliminarea/alterarea discountului de membership;
 - schimbarea rotunjirii costului.
 
@@ -171,12 +182,16 @@ python -m coverage report -m --include="fitness_class_booking.py"
 
 Rezultate:
 
-- teste: 66 passed;
+- teste: 99 passed;
 - coverage pe `fitness_class_booking.py`: 100%;
 - branch coverage pe `fitness_class_booking.py`: 100%;
+- mutanti verificati: 95;
+- mutanti omorati: 80;
+- mutanti suspiciosi: 15;
 - mutanti supravietuitori: 0.
 
-Output-urile comenzilor sunt salvate in `logs/`.
+Output-urile comenzilor sunt salvate in `logs/`, iar capturile finale sunt in
+`screenshots/`.
 
 ## 9. Concluzie
 

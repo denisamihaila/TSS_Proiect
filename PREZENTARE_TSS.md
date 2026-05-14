@@ -121,23 +121,31 @@ fitness_class_booking.py: 100%
 
 Rezultat:
 
+- 95 mutanti verificati;
+- 80 mutanti omorati;
 - 0 mutanti supravietuitori;
-- 7 mutanti suspiciosi.
+- 15 mutanti suspiciosi;
+- 0 timeout, 0 skipped.
 
 Teste suplimentare:
 
+- multiple `attended`;
 - multiple `no_show`;
 - multiple `cancelled`;
+- cost calculat pe pachetul complet;
 - discount membership;
 - rotunjire cost;
 - mesaje publice de eroare.
 
 ## Slide 14 - Rezultate finale
 
-- 66 teste;
+- 99 teste;
 - toate trec;
 - 100% coverage pe fisierul principal;
+- 43 statements, 0 missing;
+- 26 branches, 0 partial;
 - 0 mutanti supravietuitori;
+- capturi finale disponibile in `screenshots/`;
 - proiect mai simplu si mai usor de prezentat.
 
 ## Slide 15 - Concluzie
