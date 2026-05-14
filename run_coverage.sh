@@ -48,7 +48,7 @@ run_coverage() {
 }
 
 mutmut_available() {
-    "$PYTHON_BIN" -m mutmut --version >/dev/null 2>&1
+    "$PYTHON_BIN" -m mutmut version >/dev/null 2>&1
 }
 
 run_mutmut() {
