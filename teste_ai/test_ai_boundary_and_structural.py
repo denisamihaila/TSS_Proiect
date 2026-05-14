@@ -57,6 +57,19 @@ def test_ai_boundary_package_size_edges_return_expected_state(
     assert {key: result[key] for key in expected} == expected
 
 
+def test_ai_boundary_upper_package_limit_can_finish_cleanly_with_membership_discount() -> None:
+    result = booking().evaluate_client_package(["attended"] * 20, 20, True)
+
+    expected = {
+        "attended": 20,
+        "used_sessions": 20,
+        "remaining_sessions": 0,
+        "total_cost": 800.0,
+        "status": "completed_successfully",
+    }
+    assert {key: result[key] for key in expected} == expected
+
+
 @pytest.mark.parametrize(
     "package_sessions",
     [

@@ -21,6 +21,23 @@ def test_ai_path_order_of_valid_statuses_does_not_change_aggregate_counts() -> N
     }
 
 
+def test_ai_mutation_status_matching_uses_value_equality_for_dynamic_strings() -> None:
+    history = [
+        "".join(("att", "ended")),
+        "_".join(("no", "show")),
+        "".join(("cancel", "led")),
+    ]
+
+    result = result_for(history, package_sessions=3)
+
+    assert history == ["attended", "no_show", "cancelled"]
+    assert result["attended"] == 1
+    assert result["no_show"] == 1
+    assert result["cancelled"] == 1
+    assert result["used_sessions"] == 2
+    assert result["remaining_sessions"] == 1
+
+
 def test_ai_path_inserted_cancellations_do_not_change_consumption_or_price() -> None:
     compact = result_for(["attended", "no_show"], 4, member=True, price=80.0)
     padded = result_for(

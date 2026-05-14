@@ -67,6 +67,11 @@ def test_ai_constructor_valid_equivalence_groups_normalize_state(
             id="price-bool",
         ),
         pytest.param(
+            lambda: FitnessClassBooking("yoga", "Ana", None),
+            "price_per_session must be greater than 0",
+            id="price-none",
+        ),
+        pytest.param(
             lambda: FitnessClassBooking("yoga", "Ana", -0.01),
             "price_per_session must be greater than 0",
             id="price-negative",
@@ -81,10 +86,9 @@ def test_ai_constructor_invalid_equivalence_groups_keep_distinct_messages(
 
 
 @pytest.mark.parametrize(
-    ("label", "history", "package_sessions", "member", "expected"),
+    ("history", "package_sessions", "member", "expected"),
     [
         pytest.param(
-            "empty-history",
             [],
             9,
             False,
@@ -92,7 +96,6 @@ def test_ai_constructor_invalid_equivalence_groups_keep_distinct_messages(
             id="valid-empty-history",
         ),
         pytest.param(
-            "only-cancellations",
             ["cancelled", "cancelled"],
             4,
             True,
@@ -106,7 +109,6 @@ def test_ai_constructor_invalid_equivalence_groups_keep_distinct_messages(
             id="valid-cancelled-only",
         ),
         pytest.param(
-            "mixed-active",
             ["attended", "cancelled", "no_show", "attended"],
             7,
             False,
@@ -114,7 +116,6 @@ def test_ai_constructor_invalid_equivalence_groups_keep_distinct_messages(
             id="valid-mixed-active",
         ),
         pytest.param(
-            "clean-finish",
             ["attended", "cancelled", "attended"],
             2,
             False,
@@ -122,7 +123,6 @@ def test_ai_constructor_invalid_equivalence_groups_keep_distinct_messages(
             id="valid-clean-finish",
         ),
         pytest.param(
-            "absence-finish",
             ["cancelled", "no_show"],
             1,
             False,
@@ -132,7 +132,6 @@ def test_ai_constructor_invalid_equivalence_groups_keep_distinct_messages(
     ],
 )
 def test_ai_method_valid_equivalence_groups_are_checked_by_partial_snapshots(
-    label,
     history,
     package_sessions,
     member,
