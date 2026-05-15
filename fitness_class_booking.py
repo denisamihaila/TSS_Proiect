@@ -1,6 +1,6 @@
 class FitnessClassBooking:
     """
-    Clasa folosita in proiectul TSS pentru evaluarea unui pachet de sedinte.
+    Clasa folosita pentru evaluarea unui pachet de sedinte.
     Metoda principala testata este evaluate_client_package.
     """
 

@@ -72,7 +72,7 @@ class TestDecisionCoverage(unittest.TestCase):
     """
     Teste pentru acoperire la nivel de decizie.
 
-    Fiecare decizie relevanta este exercitata cel putin o data pe ramura True
+    Fiecare decizie relevanta este executata cel putin o data pe ramura True
     si cel putin o data pe ramura False.
     """
 
