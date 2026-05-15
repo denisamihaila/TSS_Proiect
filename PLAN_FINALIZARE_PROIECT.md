@@ -243,8 +243,8 @@ Capturile care trebuie refacute pentru starea curenta a proiectului:
 1. `01_pytest_100_passed.png`
 2. `02_coverage_run_100_passed.png`
 3. `03_coverage_report_100_percent.png`
-4. `04_coverage_html_generated.png`
-5. `05_mutmut_run.png`
+4. `04_coverage_html.png`
+5. `05_mutmut.png`
 6. `06_mutmut_results.png`
 7. `07_pytest_ai_70_passed.png`
 
