@@ -525,17 +525,15 @@ greșite ale comportamentului [2][3][4].
 
 ## 13. Capturi de ecran și loguri
 
-Capturile existente sunt în folderul `screenshots/`. Primele două capturi și
-captura `mutmut` au fost făcute înainte de adăugarea testului explicit pentru
-`zumba`, deci rezultatele curente sunt notate în tabel:
+Capturile finale sunt în folderul `screenshots/`:
 
 | Fișier | Conținut |
 | --- | --- |
-| `01_pytest_99_passed.png` | captură veche pytest; după testul `zumba`, rezultatul curent este `100 passed` |
-| `02_coverage_run_99_passed.png` | captură veche coverage; după testul `zumba`, rezultatul curent este `100 passed` |
+| `01_pytest_100_passed.png` | rulare `python -m pytest -q` cu `100 passed` |
+| `02_coverage_run_100_passed.png` | rulare coverage cu `100 passed` |
 | `03_coverage_report_100_percent.png` | raport coverage cu `100%` pe `fitness_class_booking.py` |
-| `04_coverage_html_generated.png` | generarea raportului HTML coverage |
-| `05_mutmut_run.png` | sumar mutmut anterior; rezultatul curent este `95` mutanți, `85 killed`, `10 suspicious`, `0 survived` |
+| `04_coverage_html.png` | generarea raportului HTML coverage |
+| `05_mutmut.png` | sumar mutmut: `95` mutanți, `85 killed`, `10 suspicious`, `0 survived` |
 | `06_mutmut_results.png` | lista mutanților `Suspicious` raportați de mutmut |
 | `07_pytest_ai_70_passed.png` | rulare `python -m pytest -q teste_ai` cu `70 passed` |
 
