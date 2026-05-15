@@ -1,0 +1,12 @@
+To apply a mutant on disk:
+    mutmut apply <id>
+
+To show a mutant:
+    mutmut show <id>
+
+
+Suspicious 🤔 (8)
+
+---- fitness_class_booking.py (8) ----
+
+5, 14, 19, 22, 79, 81-82, 88

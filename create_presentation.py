@@ -10,6 +10,7 @@ from pptx.enum.text import PP_ALIGN
 from pptx.oxml.ns import qn
 from lxml import etree
 import copy
+from pathlib import Path
 
 # ── Paleta de culori ──────────────────────────────────────────────────────────
 BG_DARK     = RGBColor(0x0F, 0x17, 0x2A)   # fundal principal
@@ -216,7 +217,7 @@ def slide_1_title(prs):
 
     # Metrici card-uri dreapta
     metrics = [
-        ("99", "teste principale"),
+        ("100", "teste principale"),
         ("100%", "coverage"),
         ("0", "mutanți survived"),
     ]
@@ -467,14 +468,14 @@ def slide_5_test_suite(prs):
 
     add_textbox(slide, "Proiectarea suitei principale de teste",
                 0.4, 0.1, 12.5, 0.7, font_size=28, bold=True, color=WHITE)
-    add_textbox(slide, "99 teste organizate pe tehnicile cerute în tema T1",
+    add_textbox(slide, "100 teste organizate pe tehnicile cerute în tema T1",
                 0.4, 0.75, 12.0, 0.4, font_size=13, color=ACCENT_GRN)
 
     # Tabel principal
     tbl_headers = ["Fișier", "Strategie", "Nr. teste", "Rol principal"]
     tbl_rows = [
         ("test_equivalence_partitioning.py", "Clase de echivalență",
-         ("22", ACCENT_BLUE), "Domenii valide/invalide pentru constructor și metodă"),
+         ("23", ACCENT_BLUE), "Domenii valide/invalide pentru constructor și metodă"),
         ("test_boundary_value_analysis.py", "Valori de frontieră",
          ("16", ACCENT_BLUE), "Limite la 1, 20, prețuri minime și depășiri"),
         ("test_coverage.py", "Instrucțiune / Decizie / Condiție",
@@ -494,14 +495,14 @@ def slide_5_test_suite(prs):
     add_rect(slide, 0.4, 4.7, 12.5, 0.05, ACCENT_GRN)
     add_textbox(slide, "TOTAL SUITE PRINCIPALĂ:", 0.7, 4.78, 4.0, 0.5,
                 font_size=16, bold=True, color=WHITE)
-    add_textbox(slide, "99 teste", 4.7, 4.73, 2.5, 0.6,
+    add_textbox(slide, "100 teste", 4.7, 4.73, 2.5, 0.6,
                 font_size=24, bold=True, color=ACCENT_GRN, align=PP_ALIGN.CENTER)
     add_textbox(slide, "toate structurate explicit pe tehnicile studiate la curs și laborator",
                 7.2, 4.78, 5.5, 0.5, font_size=13, color=GRAY_L)
 
     # Card-uri sumare per strategie
     strategy_cards = [
-        ("Funcțional", "22 + 16 = 38", "Echivalență + Frontiere", ACCENT_BLUE),
+        ("Funcțional", "23 + 16 = 39", "Echivalență + Frontiere", ACCENT_BLUE),
         ("Structural", "40 + 10 = 50", "Coverage + Circuite", ACCENT_TEAL),
         ("Mutation", "11", "Orientate pe mutanți", ACCENT_AMB),
     ]
@@ -528,7 +529,7 @@ def slide_6_functional(prs):
 
     add_textbox(slide, "Testare funcțională: Echivalență și Frontiere",
                 0.4, 0.1, 12.5, 0.7, font_size=28, bold=True, color=WHITE)
-    add_textbox(slide, "22 teste pentru echivalență  +  16 teste pentru valori de frontieră",
+    add_textbox(slide, "23 teste pentru echivalență  +  16 teste pentru valori de frontieră",
                 0.4, 0.75, 12.0, 0.4, font_size=13, color=ACCENT_BLUE)
 
     # Clase valide
@@ -715,8 +716,8 @@ def slide_8_mutation(prs):
 
     mutmut_stats = [
         ("Mutanți verificați", "95 / 95", WHITE),
-        ("Killed", "80", ACCENT_GRN),
-        ("Suspicious", "15", ACCENT_AMB),
+        ("Killed", "85", ACCENT_GRN),
+        ("Suspicious", "10", ACCENT_AMB),
         ("Survived", "0", ACCENT_GRN),
         ("Timeout / Skipped", "0 / 0", GRAY_L),
     ]
@@ -818,7 +819,7 @@ def slide_9_ai(prs):
                 font_size=14, bold=True, color=ACCENT_BLUE)
     comp_headers = ["Criteriu", "Suita proprie", "Suita AI"]
     comp_rows = [
-        ("Număr teste", "99", "70"),
+        ("Număr teste", "100", "70"),
         ("Organizare", "Pe tehnici de testare", "Pe scenarii, validări, proprietăți"),
         ("Stil", "Explicit, didactic", "Compact, parametrizat"),
         ("Scop", "Demonstrarea strategiilor cerute", "Perspectivă independentă"),
@@ -856,7 +857,7 @@ def slide_10_results(prs):
 
     # Metrici principale – 6 card-uri
     metrics = [
-        ("99", "teste principale", ACCENT_GRN),
+        ("100", "teste principale", ACCENT_GRN),
         ("70", "teste AI", ACCENT_BLUE),
         ("100%", "statement coverage", ACCENT_GRN),
         ("100%", "branch coverage", ACCENT_GRN),
@@ -880,9 +881,9 @@ def slide_10_results(prs):
     add_textbox(slide, "Livrabile", 0.4, 5.5, 5.8, 0.38,
                 font_size=14, bold=True, color=ACCENT_BLUE)
     deliverables = [
-        "README.md – documentație completă (710 linii)",
+        "README.md – documentație completă (713 linii)",
         "fitness_class_booking.py – clasa testată",
-        "test_*.py (5 fișiere) – suita principală 99 teste",
+        "test_*.py (5 fișiere) – suita principală 100 teste",
         "teste_ai/ (4 fișiere) – suita AI 70 teste",
         "cfg_diagrama.drawio.png, cause_effect_graph.png",
         "screenshots/ (7) + logs/ + cosmic_ray/",
@@ -938,7 +939,7 @@ def build_presentation():
     slide_10_results(prs)
     print("  [10/10] Rezultate finale")
 
-    output = r"d:\Licenta\TSS_Proiect\TSS_T1_FitnessClassBooking.pptx"
+    output = Path(__file__).with_name("TSS_T1_FitnessClassBooking.pptx")
     prs.save(output)
     print(f"\nPrezentare salvata: {output}")
 

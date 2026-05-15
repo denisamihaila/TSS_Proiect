@@ -20,7 +20,7 @@ Informații incluse:
 - Proiect: `FitnessClassBooking`
 - Metodă: `evaluate_client_package(session_history, package_sessions, has_membership)`
 - Framework: pytest 9.0.3 | coverage.py 7.13.5 | mutmut 2.5.1 | Cosmic Ray
-- Card-uri laterale cu metrici: **99 teste principale**, **100% coverage**, **0 mutanți survived**
+- Card-uri laterale cu metrici: **100 teste principale**, **100% coverage**, **0 mutanți survived**
 
 ---
 
@@ -100,15 +100,15 @@ Informații incluse:
 
 | Fișier | Strategie | Nr. teste | Rol principal |
 | --- | --- | ---: | --- |
-| `test_equivalence_partitioning.py` | Clase de echivalență | 22 | Domenii valide/invalide |
+| `test_equivalence_partitioning.py` | Clase de echivalență | 23 | Domenii valide/invalide |
 | `test_boundary_value_analysis.py` | Valori de frontieră | 16 | Limite la 1, 20 și depășiri |
 | `test_coverage.py` | Instrucțiune/Decizie/Condiție | 40 | Execuția tuturor ramurilor |
 | `test_independent_circuits.py` | Circuite independente | 10 | Drumuri reprezentative |
 | `test_mutation.py` | Teste orientate pe mutanți | 11 | Întărire mutation testing |
 
-- **Total: 99 teste** (highlight verde)
+- **Total: 100 teste** (highlight verde)
 - **Card-uri rezumat**:
-  - Funcțional: 22+16 = 38 (Echivalență + Frontiere)
+  - Funcțional: 23+16 = 39 (Echivalență + Frontiere)
   - Structural: 40+10 = 50 (Coverage + Circuite)
   - Mutation: 11 (Orientate pe mutanți)
 
@@ -181,8 +181,8 @@ Informații incluse:
 
 - **mutmut 2.5.1** (WSL Ubuntu 24.04.1):
   - Mutanți verificați: 95/95
-  - Killed: **80** (verde)
-  - Suspicious: **15** (amber)
+  - Killed: **85** (verde)
+  - Suspicious: **10** (amber)
   - Survived: **0** (verde)
   - Timeout / Skipped: 0 / 0
   - Notă: Suspicious ≠ Survived – rulări lente, nu mutanți supraviețuitori
@@ -226,7 +226,7 @@ Informații incluse:
 
 | Criteriu | Suita proprie | Suita AI |
 | --- | --- | --- |
-| Număr teste | 99 | 70 |
+| Număr teste | 100 | 70 |
 | Organizare | Pe tehnici de testare | Pe scenarii, validări, proprietăți |
 | Stil | Explicit, didactic | Compact, parametrizat |
 | Scop | Demonstrarea strategiilor cerute | Perspectivă independentă |
@@ -241,16 +241,16 @@ Informații incluse:
 Informații incluse:
 
 - **6 card-uri metrici**:
-  - 99 – teste principale
+  - 100 – teste principale
   - 70 – teste AI
   - 100% – statement coverage
   - 100% – branch coverage
   - 0 – mutanți survived (mutmut)
   - 94.58% – kill rate (Cosmic Ray)
 - **Livrabile**:
-  - `README.md` – documentație completă (710 linii)
+  - `README.md` – documentație completă (713 linii)
   - `fitness_class_booking.py` – clasa testată
-  - `test_*.py` (5 fișiere) – suita principală 99 teste
+  - `test_*.py` (5 fișiere) – suita principală 100 teste
   - `teste_ai/` (4 fișiere) – suita AI 70 teste
   - `cfg_diagrama.drawio.png`, `cause_effect_graph.png`
   - `screenshots/` (7 capturi) + `logs/` + `cosmic_ray/`

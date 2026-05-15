@@ -1,7 +1,5 @@
-﻿PS D:\Licenta\TSS_Proiect> wsl -d Ubuntu
-deni@DESKTOP-6PU1PAE:/mnt/d/Licenta/TSS_Proiect$ python -m mutmut run --paths-to-mutate fitness_class_booking.py \
-  --tests-dir . \
-  --runner "python -m pytest -q test_equivalence_partitioning.py test_boundary_value_analysis.py test_coverage.py test_independent_circuits.py test_mutation.py"
+﻿(.venv-wsl) alex@cartoiul-pc:/mnt/c/Users/alexn/Documents/GitHub/TSS_Proiect$ python -m mutmut run --paths-to-mutate fitness_class_booking.py --tests-dir . --runner "python -m pytest -q"
+python -m mutmut results
 
 - Mutation testing starting -
 
@@ -21,12 +19,10 @@ Legend for output:
 🙁 Survived.         This means your tests need to be expanded.
 🔇 Skipped.          Skipped.
 
-1. Running tests without mutations
-⠹ Running...Done
+1. Using cached time for baseline tests, to run baseline again delete the cache file
 
 2. Checking mutants
-⠹ 95/95  🎉 80  ⏰ 0  🤔 15  🙁 0  🔇 0
-deni@DESKTOP-6PU1PAE:/mnt/d/Licenta/TSS_Proiect$ python -m mutmut results
+⠴ 95/95  🎉 85  ⏰ 0  🤔 10  🙁 0  🔇 0
 To apply a mutant on disk:
     mutmut apply <id>
 
@@ -34,8 +30,8 @@ To show a mutant:
     mutmut show <id>
 
 
-Suspicious 🤔 (15)
+Suspicious 🤔 (10)
 
----- fitness_class_booking.py (15) ----
+---- fitness_class_booking.py (10) ----
 
-3, 5, 86, 89-90, 93-94, 96, 102, 112, 114, 118, 137, 143, 161
+3, 5, 8, 13, 18, 43-44, 64, 84-85

@@ -41,7 +41,7 @@ python -m pytest -q
 Rezultat asteptat:
 
 ```text
-99 passed
+100 passed
 ```
 
 Pentru capturi mai detaliate:
@@ -138,9 +138,9 @@ Rezultat asteptat:
 
 ```text
 95/95
-Killed: 80
+Killed: 85
 Timeout: 0
-Suspicious: 15
+Suspicious: 10
 Survived: 0
 Skipped: 0
 ```
@@ -238,10 +238,10 @@ Dupa ce totul este verificat, fa capturi noi pentru:
 5. `mutmut run ...`
 6. `mutmut results`
 
-Capturile finale realizate:
+Capturile care trebuie refacute pentru starea curenta a proiectului:
 
-1. `01_pytest_99_passed.png`
-2. `02_coverage_run_99_passed.png`
+1. `01_pytest_100_passed.png`
+2. `02_coverage_run_100_passed.png`
 3. `03_coverage_report_100_percent.png`
 4. `04_coverage_html_generated.png`
 5. `05_mutmut_run.png`

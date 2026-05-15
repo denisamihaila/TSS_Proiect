@@ -26,6 +26,13 @@ class TestEquivalencePartitioning(unittest.TestCase):
         self.assertEqual(booking.instructor, "Maria Pop")
         self.assertEqual(booking.price_per_session, 40.0)
 
+    def test_ep_valid_zumba_constructor_data_creates_booking(self) -> None:
+        booking = FitnessClassBooking("zumba", "Ana Pop", 50.0)
+
+        self.assertEqual(booking.class_name, "zumba")
+        self.assertEqual(booking.instructor, "Ana Pop")
+        self.assertEqual(booking.price_per_session, 50.0)
+
     def test_ep_invalid_class_name_type_raises_value_error(self) -> None:
         with self.assertRaises(ValueError):
             FitnessClassBooking(123, "Ana Pop", 50.0)

@@ -6,6 +6,7 @@ __pycache__/
 htmlcov/
 .coverage
 .mutmut-cache
+.venv-wsl/
 cosmic_ray/*.sqlite
 cosmic_ray/.venv/
 

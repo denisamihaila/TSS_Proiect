@@ -228,13 +228,13 @@ suita principală de teste, astfel încât testele generate/asistate de AI din
 
 ## 8. Strategii de testare
 
-Suita principală are **99 de teste** și este împărțită pe tehnicile cerute.
+Suita principală are **100 de teste** și este împărțită pe tehnicile cerute.
 Testarea este făcută cu `pytest`, un framework de testare unitară pentru Python
 [1].
 
 | Fișier | Strategie | Nr. teste | Rol |
 | --- | --- | ---: | --- |
-| `test_equivalence_partitioning.py` | partiționare în clase de echivalență | 22 | verifică domenii valide/invalide pentru constructor și metodă |
+| `test_equivalence_partitioning.py` | partiționare în clase de echivalență | 23 | verifică domenii valide/invalide pentru constructor și metodă |
 | `test_boundary_value_analysis.py` | valori de frontieră | 16 | verifică limitele `1`, `20`, prețuri minime și depășiri |
 | `test_coverage.py` | acoperire instrucțiune/decizie/condiție | 40 | urmărește execuția tuturor ramurilor relevante |
 | `test_independent_circuits.py` | circuite independente | 10 | verifică drumuri reprezentative prin fluxul metodei |
@@ -250,6 +250,10 @@ Clase valide:
 - istoric gol sau cu statusuri valide;
 - pachet între `1` și `20`;
 - `has_membership` strict boolean.
+
+Pentru `class_name`, valorile permise formează un set enumerat. Din acest motiv,
+testele includ și un caz explicit pentru `zumba`, adăugat după rularea mutation
+testing, astfel încât mutațiile asupra literalilor validați să fie detectate.
 
 Clase invalide:
 
@@ -420,7 +424,7 @@ python -m pytest -q
 Rezultat:
 
 ```text
-99 passed
+100 passed
 ```
 
 Interpretare: toate testele din suita principală trec, iar comportamentul
@@ -462,18 +466,18 @@ Rezultat final:
 
 ```text
 95/95 mutanți verificați
-Killed: 80
+Killed: 85
 Timeout: 0
-Suspicious: 15
+Suspicious: 10
 Survived: 0
 Skipped: 0
 ```
 
 Interpretare:
 
-- `80` de mutanți au fost omorâți de teste;
+- `85` de mutanți au fost omorâți de teste;
 - nu există mutanți în categoria `Survived`;
-- cei `15` mutanți `Suspicious` nu sunt echivalenți cu `Survived`;
+- cei `10` mutanți `Suspicious` nu sunt echivalenți cu `Survived`;
 - categoria `Suspicious` indică rulări mai lente decât baseline-ul, dar fără
   timeout fatal.
 
@@ -510,9 +514,9 @@ cosmic_ray/
 
 | Tool | Ce măsoară | Rezultat | Interpretare |
 | --- | --- | --- | --- |
-| `pytest` | dacă aserțiunile trec | `99 passed` | suita principală este stabilă |
+| `pytest` | dacă aserțiunile trec | `100 passed` | suita principală este stabilă |
 | `coverage.py` | execuția instrucțiunilor și ramurilor | `100%` | codul principal este acoperit complet |
-| `mutmut` | rezistența testelor la mutații | `80 killed`, `0 survived` | testele detectează mutațiile neechivalente generate de mutmut |
+| `mutmut` | rezistența testelor la mutații | `85 killed`, `0 survived` | testele detectează mutațiile neechivalente generate de mutmut |
 | `Cosmic Ray` | mutation testing cu alți operatori | `94.58%` scor aproximativ | confirmă robustețea generală, dar arată câțiva mutanți rămași |
 
 Concluzie: coverage-ul confirmă execuția codului, iar mutation testing-ul
@@ -521,15 +525,17 @@ greșite ale comportamentului [2][3][4].
 
 ## 13. Capturi de ecran și loguri
 
-Capturile finale sunt în folderul `screenshots/`:
+Capturile existente sunt în folderul `screenshots/`. Primele două capturi și
+captura `mutmut` au fost făcute înainte de adăugarea testului explicit pentru
+`zumba`, deci rezultatele curente sunt notate în tabel:
 
 | Fișier | Conținut |
 | --- | --- |
-| `01_pytest_99_passed.png` | rulare `python -m pytest -q` cu `99 passed` |
-| `02_coverage_run_99_passed.png` | rulare coverage cu `99 passed` |
+| `01_pytest_99_passed.png` | captură veche pytest; după testul `zumba`, rezultatul curent este `100 passed` |
+| `02_coverage_run_99_passed.png` | captură veche coverage; după testul `zumba`, rezultatul curent este `100 passed` |
 | `03_coverage_report_100_percent.png` | raport coverage cu `100%` pe `fitness_class_booking.py` |
 | `04_coverage_html_generated.png` | generarea raportului HTML coverage |
-| `05_mutmut_run.png` | sumar mutmut: `95` mutanți, `80 killed`, `15 suspicious`, `0 survived` |
+| `05_mutmut_run.png` | sumar mutmut anterior; rezultatul curent este `95` mutanți, `85 killed`, `10 suspicious`, `0 survived` |
 | `06_mutmut_results.png` | lista mutanților `Suspicious` raportați de mutmut |
 | `07_pytest_ai_70_passed.png` | rulare `python -m pytest -q teste_ai` cu `70 passed` |
 
@@ -600,7 +606,7 @@ Rezultat:
 
 | Criteriu | Suita proprie | Suita AI |
 | --- | --- | --- |
-| Număr teste | 99 | 70 |
+| Număr teste | 100 | 70 |
 | Organizare | pe tehnici de testare | pe scenarii, validări, limite și proprietăți |
 | Stil | explicit, didactic, ușor de corelat cu cerința | compact, parametrizat, orientat pe scenarii |
 | Scop | demonstrarea strategiilor cerute la curs | perspectivă suplimentară și scenarii alternative |
@@ -670,7 +676,7 @@ structurală.
 
 Rezultatele finale sunt:
 
-- `99` teste în suita principală;
+- `100` teste în suita principală;
 - `70` teste în suita AI;
 - `100%` statement coverage;
 - `100%` branch coverage pentru fișierul principal;

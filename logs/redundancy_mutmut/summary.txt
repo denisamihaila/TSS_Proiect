@@ -1,0 +1,6 @@
+test_mutation_bool_price_is_rejected => POSIBIL REDUNDANT fata de mutmut: nu apar mutanti survived fara el
+test_mutation_cancelled_session_does_not_consume_package_session => POSIBIL REDUNDANT fata de mutmut: nu apar mutanti survived fara el
+test_mutation_membership_discount_is_applied_to_whole_package => POSIBIL REDUNDANT fata de mutmut: nu apar mutanti survived fara el
+test_mutation_membership_discount_is_not_applied_without_membership => POSIBIL REDUNDANT fata de mutmut: nu apar mutanti survived fara el
+test_mutation_multiple_attended_sessions_are_all_counted => POSIBIL REDUNDANT fata de mutmut: nu apar mutanti survived fara el
+test_mutation_multiple_cancelled_sessions_are_all_counted => POSIBIL REDUNDANT fata de mutmut: nu apar mutanti survived fara el
