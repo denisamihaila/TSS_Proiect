@@ -11,6 +11,8 @@ este metoda:
 evaluate_client_package(session_history, package_sessions, has_membership)
 ```
 
+Video YouTube: [text](https://youtu.be/olGghJPauoo)
+
 ## 1. Cerința proiectului
 
 Conform temei T1, proiectul trebuie să folosească un framework de testare
