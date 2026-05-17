@@ -228,7 +228,7 @@ reprezentant ales pentru testare:
 
 | Parametru | Clasa validă | Exemplu reprezentativ |
 | --- | --- | --- |
-| `class_name` | oricare din cele 4 valori | `"dance"`, `"yoga"`, `"zumba"` (toate testate explicit) |
+| `class_name` | oricare din cele 4 valori | `"dance"`, `"yoga"`, `"zumba"`, `"pilates"` |
 | `instructor` | orice `str` nevid după `strip()` | `"Ana Pop"` |
 | `price_per_session` | orice număr pozitiv non-bool | `50.0`, `0.01` |
 | `session_history` | `list` goală sau cu statusuri corecte | `[]`, `["attended", "cancelled"]` |
