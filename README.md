@@ -129,9 +129,6 @@ Explicație pas cu pas:
 
 ## 5. Cerințe structurale acoperite de metodă
 
-Metoda a fost aleasă astfel încât să conțină explicit elementele necesare
-pentru testarea structurală cerută la curs:
-
 | Cerință | Unde apare în cod |
 | --- | --- |
 | minimum 3 parametri | `session_history`, `package_sessions`, `has_membership` |
