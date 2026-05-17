@@ -11,12 +11,12 @@ este metoda:
 evaluate_client_package(session_history, package_sessions, has_membership)
 ```
 
-Video YouTube: [text](https://youtu.be/olGghJPauoo)
+Video YouTube: [Link](https://youtu.be/olGghJPauoo)
 
 ## 1. Cerința proiectului
 
-Conform temei T1, proiectul trebuie să folosească un framework de testare
-unitară din Python și să ilustreze strategiile de generare a testelor discutate
+Folosirea unui framework de testare
+unitară din Python și ilustrarea strategiilor de generare a testelor discutate
 la curs:
 
 - partiționare în clase de echivalență;
@@ -27,10 +27,6 @@ la curs:
 - circuite independente;
 - analiză pe baza unui generator de mutanți;
 - teste suplimentare pentru omorârea unor mutanți neechivalenți.
-
-Pe lângă cod și teste, proiectul include documentație completă, diagrame
-realizate cu tool dedicat, capturi de ecran cu rulările finale, comparații
-între tool-uri și o secțiune despre utilizarea unui instrument AI.
 
 ## 2. Ideea aplicației
 
@@ -230,6 +226,34 @@ invalidă (consumat > pachet), care produce `ValueError`.
 
 **Clasele de output** acoperă cele trei statusuri finale posibile: `active`,
 `completed_successfully` și `completed_with_absences`.
+
+Tabelele de mai jos sintetizează toate clasele identificate, cu câte un
+reprezentant ales pentru testare:
+
+**Clase valide**
+
+| Parametru | Clasa validă | Exemplu reprezentativ |
+| --- | --- | --- |
+| `class_name` | oricare din cele 4 valori | `"dance"`, `"yoga"`, `"zumba"` (toate testate explicit) |
+| `instructor` | orice `str` nevid după `strip()` | `"Ana Pop"` |
+| `price_per_session` | orice număr pozitiv non-bool | `50.0`, `0.01` |
+| `session_history` | `list` goală sau cu statusuri corecte | `[]`, `["attended", "cancelled"]` |
+| `package_sessions` | `int` în `[1, 20]` | `5`, `1`, `20` |
+| `has_membership` | `True` sau `False` | `True`, `False` |
+| output `status` | oricare din cele 3 statusuri | `active`, `completed_successfully`, `completed_with_absences` |
+
+**Clase invalide** — fiecare produce `ValueError`
+
+| Parametru | Clasa 1 | Clasa 2 | Clasa 3 | Clasa 4 |
+| --- | --- | --- | --- | --- |
+| `class_name` | tip greșit: `123`, `None` | valoare necunoscută: `"boxing"` | — | — |
+| `instructor` | tip greșit: `42`, `None` | gol/spații: `""`, `"   "` | — | — |
+| `price_per_session` | tip `bool`: `True`, `False` | non-numeric: `"50"` | nepozitiv: `0`, `-10` | — |
+| `session_history` | non-list: `"attended"`, `("a",)` | — | — | — |
+| `package_sessions` | tip `bool`: `True`, `False` | non-int: `"5"`, `5.0` | sub limită: `0` | peste limită: `21`, `25` |
+| `has_membership` | non-bool: `1`, `0`, `"yes"`, `None` | — | — | — |
+| status în istoric | tip greșit: `None`, `42` | valoare necunoscută: `"late"` | — | — |
+| consum | `used_sessions > package_sessions` | — | — | — |
 
 Un exemplu reprezentativ pentru clasa validă mixtă, care verifică simultan
 toate contoarele și discountul:
