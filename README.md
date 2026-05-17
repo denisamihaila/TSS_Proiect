@@ -1,8 +1,5 @@
 # TSS T1 - Testare unitară în Python
 
-Lucrare realizată pentru disciplina **Testarea Sistemelor Software**, tema
-**T1 - Testare unitară în Python**.
-
 Clasa testată este `FitnessClassBooking`, care modelează evaluarea unui pachet
 de ședințe pentru o clasă de fitness. Funcționalitatea principală analizată
 este metoda:
