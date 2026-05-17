@@ -1,15 +1,9 @@
 # Cosmic Ray notes
 
 Acest folder pastreaza artefactele relevante pentru rularea Cosmic Ray.
-Copia completa a proiectului nu este necesara pentru analiza de mutatie si a
-fost eliminata ca sa nu fie colectate teste duplicate de `pytest`.
-
 Cosmic Ray este un tool de mutation testing, similar ca scop cu `mutmut`.
-Rezultatul este folosit ca analiza suplimentara/comparativa.
 
 ## Comenzi
-
-Comenzile se ruleaza din radacina proiectului.
 
 ```powershell
 cd D:\Licenta\TSS_Proiect
