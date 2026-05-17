@@ -170,7 +170,7 @@ per strategie. Toate testele folosesc framework-ul `pytest` [1].
 
 ---
 
-### 8.1 Partiționare în clase de echivalență
+### 7.1 Partiționare în clase de echivalență
 
 Partiționarea în clase de echivalență presupune împărțirea domeniului de intrare
 în grupuri de valori care ar trebui să se comporte identic din perspectiva
@@ -268,7 +268,7 @@ def test_ep_valid_mixed_history_with_membership(self) -> None:
 
 ---
 
-### 8.2 Analiza valorilor de frontieră
+### 7.2 Analiza valorilor de frontieră
 
 Analiza valorilor de frontieră extinde partiționarea prin testarea valorilor
 de la limita dintre clase valide și invalide. Erorile de implementare apar
@@ -334,7 +334,7 @@ self.booking.evaluate_client_package(
 
 ---
 
-### 8.3 Acoperire structurală
+### 7.3 Acoperire structurală
 
 Acoperirea structurală urmărește execuția zonelor din codul sursă, nu a
 cazurilor de business. Au fost aplicate trei niveluri, în ordinea crescătoare
@@ -432,7 +432,7 @@ Fiecare condiție atomică este acoperită separat printr-un test dedicat:
 
 ---
 
-### 8.4 Circuite independente
+### 7.4 Circuite independente
 
 Un circuit independent reprezintă un drum complet prin graful de control al
 fluxului (CFG), de la intrarea în metodă până la ieșire. Două circuite sunt
@@ -478,7 +478,7 @@ self.assertEqual(result["total_cost"], 120.0)  # 3 × 50 × 0.80, nu 1 × 50 × 
 
 ---
 
-### 8.5 Mutation testing
+### 7.5 Mutation testing
 
 Mutation testing-ul evaluează calitatea testelor prin introducerea automată
 a unor modificări mici (mutanți) în codul sursă și verificarea dacă testele
