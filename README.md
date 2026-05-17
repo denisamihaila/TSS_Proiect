@@ -585,8 +585,6 @@ def test_mutation_total_cost_is_rounded_to_two_decimals(self) -> None:
 
 ## 8. Diagrame
 
-Proiectul include două diagrame realizate cu Draw.io:
-
 | Diagramă | Fișier | Rol |
 | --- | --- | --- |
 | Control Flow Graph | `cfg_diagrama.drawio.png` | fluxul metodei `evaluate_client_package` |
@@ -652,7 +650,7 @@ RUN_MUTMUT=auto bash run_coverage.sh
 
 ## 10. Rezultate finale
 
-### 11.1 Pytest
+### 10.1 Pytest
 
 ```bash
 python -m pytest -q
@@ -665,7 +663,7 @@ python -m pytest -q
 Toate cele 100 de teste din suita principală trec. Comportamentul implementat
 este stabil pentru cazurile funcționale, structurale și de mutație testate.
 
-### 11.2 Coverage.py
+### 10.2 Coverage.py
 
 ```bash
 python -m coverage run --branch -m pytest -q
@@ -685,7 +683,7 @@ Coverage-ul de 100% nu demonstrează singur că testele sunt corecte, dar arată
 că suita execută toate zonele importante din cod [2]. Mutation testing-ul
 completează această imagine.
 
-### 11.3 Mutmut
+### 10.3 Mutmut
 
 ```text
 95/95 mutanți verificați
@@ -746,7 +744,7 @@ instrument de asistență [7]. Utilizarea a vizat verificare și comparare, nu
 Propunerile AI au fost păstrate numai după verificare locală prin rularea
 efectivă a testelor.
 
-### 14.1 Prompturi reprezentative
+### 13.1 Prompturi reprezentative
 
 Prompturile de mai jos sunt reformulări sintetice ale solicitărilor folosite:
 
@@ -757,7 +755,7 @@ Prompturile de mai jos sunt reformulări sintetice ale solicitărilor folosite:
 5. `Generează o suită separată în teste_ai/ care să arate diferit de testele scrise manual, dar să fie corectă.`
 6. `Compară suita proprie cu suita AI și explică diferențele relevante pentru raport.`
 
-### 14.2 Suita AI
+### 13.2 Suita AI
 
 Suita AI este în folderul `teste_ai/` și conține **70 de teste**.
 
@@ -770,7 +768,7 @@ Suita AI este în folderul `teste_ai/` și conține **70 de teste**.
 
 Rulare: `python -m pytest -q teste_ai` → `70 passed`
 
-### 14.3 Comparație între suita proprie și suita AI
+### 13.3 Comparație între suita proprie și suita AI
 
 | Criteriu | Suita proprie | Suita AI |
 | --- | --- | --- |
@@ -781,14 +779,14 @@ Rulare: `python -m pytest -q teste_ai` → `70 passed`
 | Coverage | 100% pe `fitness_class_booking.py` | confirmă comportamentul, rulată separat |
 | Mutation focus | fișier dedicat `test_mutation.py` | teste pentru egalitate de stringuri, bool și proprietăți |
 
-### 14.4 Studiu de caz: `bool` față de `int`
+### 13.4 Studiu de caz: `bool` față de `int`
 
 Analiza asistată a evidențiat că `bool` este subclasă a lui `int` în Python [4].
 Testele verifică explicit că `price_per_session=False`, `package_sessions=True`,
 `package_sessions=False` și `has_membership=1` produc `ValueError`. Aceste
 cazuri sunt importante pentru că pot trece neobservate la o testare superficială.
 
-### 14.5 Studiu de caz: egalitatea stringurilor
+### 13.5 Studiu de caz: egalitatea stringurilor
 
 Suita AI include testul
 `test_ai_mutation_status_matching_uses_value_equality_for_dynamic_strings`,
@@ -796,7 +794,7 @@ care construiește statusurile prin concatenări și verifică că metoda le com
 prin valoare (`==`), nu prin identitate (`is`). Testul este util pentru mutanți
 care ar înlocui `==` cu `is` în comparațiile din buclă.
 
-### 14.6 Concluzie privind utilizarea AI
+### 13.6 Concluzie privind utilizarea AI
 
 Contribuția principală a instrumentului AI a fost identificarea unor cazuri
 specifice limbajului Python (`bool`/`int`) și furnizarea unei perspective
