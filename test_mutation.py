@@ -9,7 +9,7 @@ def make_booking(price_per_session: float = 50.0) -> FitnessClassBooking:
 
 class TestMutationFocusedCases(unittest.TestCase):
     """
-    Teste suplimentare orientate pe mutanti neechivalenti probabili.
+    Teste suplimentare pentru mutanti neechivalenti.
 
     Sunt vizate mutatii in incrementarea contoarelor, consumarea sedintelor,
     calculul costului, aplicarea discountului, rotunjire si mesajele publice

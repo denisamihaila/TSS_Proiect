@@ -637,6 +637,20 @@ python -m mutmut run --paths-to-mutate fitness_class_booking.py \
 python -m mutmut results
 ```
 
+Vizualizarea rezultatelor `mutmut`:
+
+```bash
+# lista tuturor mutanților cu statusul lor
+python -m mutmut results
+
+# detaliile unui mutant specific (înlocuiește <nr> cu numărul mutantului)
+python -m mutmut show <nr>
+
+# filtrare după status
+python -m mutmut results | grep -i suspicious
+python -m mutmut results | grep -i killed
+```
+
 Scriptul `run_coverage.sh` automatizează rularea și salvarea output-urilor
 în `logs/`:
 
